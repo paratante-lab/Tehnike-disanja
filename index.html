@@ -327,6 +327,59 @@
             color: var(--secondary-color);
         }
         
+        /* NOVI STILOVI ZA GUMBIĆE + I - */
+        .phase-adjust-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        
+        .adjust-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: none;
+            background-color: var(--primary-color);
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+        
+        .adjust-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+        }
+        
+        .adjust-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .adjust-btn.inhale-btn {
+            background-color: var(--accent-color);
+        }
+        
+        .adjust-btn.exhale-btn {
+            background-color: var(--danger-color);
+        }
+        
+        .adjust-btn.hold-btn {
+            background-color: var(--warning-color);
+        }
+        
+        .adjust-btn.minus-btn::after {
+            content: "-";
+        }
+        
+        .adjust-btn.plus-btn::after {
+            content: "+";
+        }
+        
         .co2-settings-summary {
             display: flex;
             justify-content: space-around;
@@ -592,6 +645,10 @@
             
             .phase-label {
                 min-width: auto;
+            }
+            
+            .phase-adjust-buttons {
+                justify-content: flex-start;
             }
             
             .co2-settings-summary {
@@ -900,6 +957,11 @@
             <!-- UDIŠAJ -->
             <div class="phase-control inhale">
                 <h3><i class="fas fa-wind" style="color: var(--accent-color);"></i> 1. Udah</h3>
+                <!-- Gumbići + i - -->
+                <div class="phase-adjust-buttons">
+                    <button class="adjust-btn inhale-btn minus-btn" onclick="adjustInhaleTime(-1)"></button>
+                    <button class="adjust-btn inhale-btn plus-btn" onclick="adjustInhaleTime(1)"></button>
+                </div>
                 <div class="phase-slider-container">
                     <span class="phase-label">Trajanje (sekunde):</span>
                     <input type="range" class="phase-slider inhale-slider" id="inhale-slider" min="2" max="20" value="4">
@@ -913,6 +975,11 @@
             <!-- IZDIŠAJ -->
             <div class="phase-control exhale">
                 <h3><i class="fas fa-wind" style="color: var(--danger-color);"></i> 2. Izdah</h3>
+                <!-- Gumbići + i - -->
+                <div class="phase-adjust-buttons">
+                    <button class="adjust-btn exhale-btn minus-btn" onclick="adjustExhaleTime(-1)"></button>
+                    <button class="adjust-btn exhale-btn plus-btn" onclick="adjustExhaleTime(1)"></button>
+                </div>
                 <div class="phase-slider-container">
                     <span class="phase-label">Trajanje (sekunde):</span>
                     <input type="range" class="phase-slider exhale-slider" id="exhale-slider" min="2" max="30" value="6">
@@ -926,6 +993,11 @@
             <!-- ZADRŽAVANJE -->
             <div class="phase-control hold">
                 <h3><i class="fas fa-stopwatch" style="color: var(--warning-color);"></i> 3. Zadržavanje</h3>
+                <!-- Gumbići + i - -->
+                <div class="phase-adjust-buttons">
+                    <button class="adjust-btn hold-btn minus-btn" onclick="adjustHoldTime(-1)"></button>
+                    <button class="adjust-btn hold-btn plus-btn" onclick="adjustHoldTime(1)"></button>
+                </div>
                 <div class="phase-slider-container">
                     <span class="phase-label">Trajanje (sekunde):</span>
                     <input type="range" class="phase-slider hold-slider" id="hold-slider" min="3" max="60" value="5">
@@ -940,7 +1012,7 @@
         <!-- Sažetak postavki -->
         <div class="co2-settings-summary">
             <div class="setting-item">
-                <div class="setting-value inhale-value" id="summary-inhale">3s</div>
+                <div class="setting-value inhale-value" id="summary-inhale">4s</div>
                 <div class="setting-label">Dijafragmalni udah</div>
             </div>
             <div class="setting-item">
@@ -1031,6 +1103,64 @@
         let co2Round = 0;
         let co2Interval = null;
         let isCO2Running = false;
+
+        // Funkcije za podešavanje CO2 vremena gumbićima
+        function adjustInhaleTime(change) {
+            const slider = document.getElementById('inhale-slider');
+            let newValue = parseInt(slider.value) + change;
+            
+            // Ograniči na min i max vrijednosti
+            newValue = Math.max(parseInt(slider.min), Math.min(parseInt(slider.max), newValue));
+            
+            // Postavi novu vrijednost
+            slider.value = newValue;
+            co2InhaleTime = newValue;
+            
+            // Ažuriraj prikaz
+            document.getElementById('inhale-value').textContent = co2InhaleTime + 's';
+            document.getElementById('summary-inhale').textContent = co2InhaleTime + 's';
+            
+            // Zvučna povratna informacija
+            playBeep(50, change > 0 ? 700 : 500);
+        }
+
+        function adjustExhaleTime(change) {
+            const slider = document.getElementById('exhale-slider');
+            let newValue = parseInt(slider.value) + change;
+            
+            // Ograniči na min i max vrijednosti
+            newValue = Math.max(parseInt(slider.min), Math.min(parseInt(slider.max), newValue));
+            
+            // Postavi novu vrijednost
+            slider.value = newValue;
+            co2ExhaleTime = newValue;
+            
+            // Ažuriraj prikaz
+            document.getElementById('exhale-value').textContent = co2ExhaleTime + 's';
+            document.getElementById('summary-exhale').textContent = co2ExhaleTime + 's';
+            
+            // Zvučna povratna informacija
+            playBeep(50, change > 0 ? 700 : 500);
+        }
+
+        function adjustHoldTime(change) {
+            const slider = document.getElementById('hold-slider');
+            let newValue = parseInt(slider.value) + change;
+            
+            // Ograniči na min i max vrijednosti
+            newValue = Math.max(parseInt(slider.min), Math.min(parseInt(slider.max), newValue));
+            
+            // Postavi novu vrijednost
+            slider.value = newValue;
+            co2HoldTime = newValue;
+            
+            // Ažuriraj prikaz
+            document.getElementById('hold-value').textContent = co2HoldTime + 's';
+            document.getElementById('summary-hold').textContent = co2HoldTime + 's';
+            
+            // Zvučna povratna informacija
+            playBeep(50, change > 0 ? 700 : 500);
+        }
 
         // Funkcija za ažuriranje svih brojača krugova
         function updateAllCycleCounts() {
@@ -1395,25 +1525,25 @@
                                             // Završio jedan cijeli krug
                                             updateCO2CycleDots();
 
-// Ako imamo još krugova → ODMAH u sljedeći UDah
-if (co2Round < globalCycles) {
-    co2Round++;
-    updateCO2CycleCounter();
-    
-    // Bez ikakvog "Spreman" teksta i bez duge pauze
-    // Samo vrlo kratki "buffer" (150–300 ms) da se UI stigne osvježiti
-    setTimeout(() => {
-        startCO2Cycle();           // ← odmah kreće novi ciklus = udah
-    }, 200);                       // 200 ms je sasvim dovoljno, možeš i 150 ili 0
-} 
-else {
-    // Završena cijela vježba
-    document.getElementById('co2-phase-display').textContent = 'Vježba završena! Odmorite se.';
-    document.getElementById('co2-circle').textContent = 'GOTOVO';
-    document.getElementById('co2-circle').style.backgroundColor = 'var(--accent-color)';
-    timerElement.textContent = '';
-    progressBar.style.width = '0%';
-    isCO2Running = false;
+                                            // Ako imamo još krugova → ODMAH u sljedeći UDah
+                                            if (co2Round < globalCycles) {
+                                                co2Round++;
+                                                updateCO2CycleCounter();
+                                                
+                                                // Bez ikakvog "Spreman" teksta i bez duge pauze
+                                                // Samo vrlo kratki "buffer" (150–300 ms) da se UI stigne osvježiti
+                                                setTimeout(() => {
+                                                    startCO2Cycle();           // ← odmah kreće novi ciklus = udah
+                                                }, 200);                       // 200 ms je sasvim dovoljno, možeš i 150 ili 0
+                                            } 
+                                            else {
+                                                // Završena cijela vježba
+                                                document.getElementById('co2-phase-display').textContent = 'Vježba završena! Odmorite se.';
+                                                document.getElementById('co2-circle').textContent = 'GOTOVO';
+                                                document.getElementById('co2-circle').style.backgroundColor = 'var(--accent-color)';
+                                                timerElement.textContent = '';
+                                                progressBar.style.width = '0%';
+                                                isCO2Running = false;
                                             }
                                         }
                                         timeLeft--;
