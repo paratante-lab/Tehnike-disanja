@@ -944,7 +944,7 @@
                 <div class="setting-label">Dijafragmalni udah</div>
             </div>
             <div class="setting-item">
-                <div class="setting-value exhale-value" id="summary-exhale">7s</div>
+                <div class="setting-value exhale-value" id="summary-exhale">6s</div>
                 <div class="setting-label">Izdah</div>
             </div>
             <div class="setting-item">
@@ -1394,32 +1394,26 @@
                                             
                                             // Završio jedan cijeli krug
                                             updateCO2CycleDots();
-                                            
-                                            // Ako imamo još krugova, nastavi
-                                            if (co2Round < globalCycles) {
-                                                co2Round++;
-                                                updateCO2CycleCounter();
-                                                
-                                                // Kraća pauza prije sljedećeg kruga (1 sekunda umjesto 2)
-                                                setTimeout(() => {
-                                                    document.getElementById('co2-phase-display').textContent = 'Priprema za sljedeći krug...';
-                                                    document.getElementById('co2-circle').textContent = 'SPREMAN';
-                                                    document.getElementById('co2-circle').style.backgroundColor = 'var(--co2-color)';
-                                                    timerElement.textContent = '';
-                                                    progressBar.style.width = '0%';
-                                                    
-                                                    setTimeout(() => {
-                                                        startCO2Cycle();
-                                                    }, 800); // 800ms umjesto 2000ms
-                                                }, 500); // 500ms umjesto 1000ms
-                                            } else {
-                                                // Završena cijela vježba
-                                                document.getElementById('co2-phase-display').textContent = 'Vježba završena! Odmorite se.';
-                                                document.getElementById('co2-circle').textContent = 'GOTOVO';
-                                                document.getElementById('co2-circle').style.backgroundColor = 'var(--accent-color)';
-                                                timerElement.textContent = '';
-                                                progressBar.style.width = '0%';
-                                                isCO2Running = false;
+
+// Ako imamo još krugova → ODMAH u sljedeći UDah
+if (co2Round < globalCycles) {
+    co2Round++;
+    updateCO2CycleCounter();
+    
+    // Bez ikakvog "Spreman" teksta i bez duge pauze
+    // Samo vrlo kratki "buffer" (150–300 ms) da se UI stigne osvježiti
+    setTimeout(() => {
+        startCO2Cycle();           // ← odmah kreće novi ciklus = udah
+    }, 200);                       // 200 ms je sasvim dovoljno, možeš i 150 ili 0
+} 
+else {
+    // Završena cijela vježba
+    document.getElementById('co2-phase-display').textContent = 'Vježba završena! Odmorite se.';
+    document.getElementById('co2-circle').textContent = 'GOTOVO';
+    document.getElementById('co2-circle').style.backgroundColor = 'var(--accent-color)';
+    timerElement.textContent = '';
+    progressBar.style.width = '0%';
+    isCO2Running = false;
                                             }
                                         }
                                         timeLeft--;
