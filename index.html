@@ -689,7 +689,7 @@
         <div class="instructions">
             <p>1. Udahni duboko kroz nos (4 sekunde)</p>
             <p>2. Zadrži dah (7 sekundi)</p>
-            <p>3. Izdisaj kroz usta (8 sekundi)</p>
+            <p>3. Izdah kroz usta (8 sekundi)</p>
             <p>Ponavljaj <span id="deep-cycle-count">5</span> puta.</p>
         </div>
         
@@ -717,7 +717,7 @@
         <div class="instructions">
             <p>1. Udahni (4 sekunde)</p>
             <p>2. Zadrži dah (4 sekunde)</p>
-            <p>3. Izdisaj (4 sekunde)</p>
+            <p>3. Izdah (4 sekunde)</p>
             <p>4. Zadrži prazna pluća (4 sekunde)</p>
             <p>Ponavljaj <span id="box-cycle-count">5</span> puta.</p>
         </div>
@@ -746,7 +746,7 @@
             <p>2. Udahni lijevom nosnicom (4 sekunde)</p>
             <p>3. Zadrži dah (4 sekunde)</p>
             <p>4. Otvori desnu, zatvori lijevu nosnicu</p>
-            <p>5. Izdisaj desnom nosnicom (6 sekundi)</p>
+            <p>5. Izdah desnom nosnicom (6 sekundi)</p>
             <p>Ponavljaj <span id="alt-cycle-count">5</span> puta.</p>
         </div>
         <div class="circle" id="alternate-circle">SPREMAN</div>
@@ -799,7 +799,7 @@
         <div class="instructions">
             <p>1. Udahni duboko kroz nos</p>
             <p>2. Prstima blago zatvori ušne kanale</p>
-            <p>3. Izdisaj uz brujanje poput pčele</p>
+            <p>3. Izdah uz brujanje poput pčele</p>
             <p>4. Osjećaj vibracije u glavi</p>
             <p>5. Ponavljaj <span id="bhr-cycle-count">5</span> puta</p>
         </div>
@@ -824,8 +824,8 @@
             </ul>
         </div>
         <div class="instructions">
-            <p><strong>Faza 1:</strong> 20-30 brzih udisaja i izdisaja u 60 sekundi</p>
-            <p><strong>Faza 2:</strong> Izdisaj i zadržavanje daha bez zraka (koliko god možeš), zatim pokreni iduću fazu</p>
+            <p><strong>Faza 1:</strong> 20-30 brzih udisaja i Izdaha u 60 sekundi</p>
+            <p><strong>Faza 2:</strong> Izdah i zadržavanje daha bez zraka (koliko god možeš), zatim pokreni iduću fazu</p>
             <p><strong>Faza 3:</strong> Duboki udisaj i zadržavanje daha 15 sekundi</p>
             <p>Ponovi ciklus <span id="wim-cycle-count">5</span> puta</p>
         </div>
@@ -864,7 +864,7 @@
         <div class="instructions">
             <p>1. Udahni duboko kroz nos</p>
             <p>2. Zadrži dah dok vizualiziraš toplinu u području pupka</p>
-            <p>3. Polako izdisaj kroz nos</p>
+            <p>3. Polako Izdah kroz nos</p>
             <p>4. Ponavljaj <span id="tum-cycle-count">5</span> puta</p>
             <p>5. Kombiniraj s meditacijom</p>
         </div>
@@ -876,13 +876,13 @@
         <button onclick="startTummo()">Pokreni vježbu</button>
     </div>
 
-    <!-- NOVO: CO2 TOLERANCIJA -->
+    <!-- NOVO: CO₂ TOLERANCIJA -->
     <div id="co2" class="exercise-container">
-        <h2>💨 CO2 Tolerancija (Kapno-metrijska vježba)</h2>
+        <h2>💨 CO₂ Tolerancija (Kapno-metrijska vježba)</h2>
         <div class="benefits">
             <h3>Benefiti:</h3>
             <ul>
-                <li>Povećava toleranciju na CO2 u krvi</li>
+                <li>Povećava toleranciju na CO₂ u krvi</li>
                 <li>Smanjuje osjećaj zadihe i panike</li>
                 <li>Poboljšava sportsku izdržljivost</li>
                 <li>Umiruje autonomni nervni sustav</li>
@@ -929,7 +929,7 @@
                 <div class="phase-slider-container">
                     <span class="phase-label">Trajanje (sekunde):</span>
                     <input type="range" class="phase-slider hold-slider" id="hold-slider" min="3" max="60" value="15">
-                    <span class="phase-value hold-value" id="hold-value">15s</span>
+                    <span class="phase-value hold-value" id="hold-value">5s</span>
                 </div>
                 <div style="font-size: 14px; color: var(--text-color); opacity: 0.8; margin-top: 8px;">
                     Zadržavanje daha bez udisanja.
@@ -1564,7 +1564,7 @@
             wimhofPhase = 2;
             
             // Ažuriraj UI
-            document.getElementById('wimhof-phase').textContent = 'FAZA 2: Izdisaj i zadrži dah (koliko god možeš)';
+            document.getElementById('wimhof-phase').textContent = 'FAZA 2: Izdah i zadrži dah (koliko god možeš)';
             document.getElementById('wimhof-circle').textContent = 'ZADRŽI';
             document.getElementById('wimhof-circle').style.backgroundColor = 'var(--danger-color)';
             document.getElementById('breath-counter').style.display = 'none';
