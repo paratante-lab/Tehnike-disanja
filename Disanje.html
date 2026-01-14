@@ -1,0 +1,2088 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vježbe disanja</title>
+    <style>
+        :root {
+            --bg-color: #f5f5f5;
+            --text-color: #333;
+            --card-bg: white;
+            --primary-color: #3498db;
+            --primary-dark: #2980b9;
+            --secondary-color: #2c3e50;
+            --accent-color: #27ae60;
+            --danger-color: #e74c3c;
+            --warning-color: #f39c12;
+            --co2-color: #9b59b6;
+            --border-color: #ddd;
+            --shadow: 0 2px 5px rgba(0,0,0,0.1);
+            --transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #1a1a1a;
+            --text-color: #e0e0e0;
+            --card-bg: #2d2d2d;
+            --primary-color: #2980b9;
+            --primary-dark: #3498db;
+            --secondary-color: #4a90e2;
+            --accent-color: #2ecc71;
+            --danger-color: #e74c3c;
+            --warning-color: #f39c12;
+            --co2-color: #8e44ad;
+            --border-color: #404040;
+            --shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: var(--transition);
+        }
+        h1 {
+            color: var(--secondary-color);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        /* HEADER SA DARK MODE TOGGLE */
+        .app-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--primary-color);
+        }
+        
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            padding: 8px 15px;
+            background-color: var(--card-bg);
+            border-radius: 25px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+        
+        .theme-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .theme-toggle .toggle-slider {
+            width: 50px;
+            height: 24px;
+            background-color: #ccc;
+            border-radius: 12px;
+            position: relative;
+            transition: var(--transition);
+        }
+        
+        .theme-toggle .toggle-slider::before {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: white;
+            top: 2px;
+            left: 2px;
+            transition: var(--transition);
+        }
+        
+        [data-theme="dark"] .theme-toggle .toggle-slider {
+            background-color: var(--primary-color);
+        }
+        
+        [data-theme="dark"] .theme-toggle .toggle-slider::before {
+            transform: translateX(26px);
+        }
+        
+        .theme-toggle .icon {
+            font-size: 18px;
+        }
+        
+        .theme-toggle .sun-icon { color: #f39c12; }
+        .theme-toggle .moon-icon { color: #3498db; }
+        
+        .menu {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+        button {
+            padding: 12px;
+            font-size: 16px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        button:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        /* CO2 SPECIFIČNI GUMB */
+        .co2-btn {
+            background-color: var(--co2-color) !important;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .co2-btn:hover {
+            background-color: #8e44ad !important;
+        }
+        
+        .co2-btn::after {
+            content: "💨";
+            position: absolute;
+            right: 10px;
+            font-size: 18px;
+        }
+        
+        .exercise-container {
+            background-color: var(--card-bg);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            display: none;
+            transition: var(--transition);
+            border: 1px solid var(--border-color);
+        }
+        .active {
+            display: block;
+        }
+        .timer {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            margin: 20px 0;
+            color: var(--text-color);
+        }
+        .cycle-counter {
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            margin: 10px 0;
+            padding: 8px;
+            background-color: var(--card-bg);
+            border-radius: 5px;
+            border: 2px solid var(--primary-color);
+            color: var(--secondary-color);
+            transition: var(--transition);
+        }
+        .instructions {
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        .benefits {
+            background-color: rgba(52, 152, 219, 0.1);
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--primary-color);
+        }
+        .benefits h3 {
+            margin-top: 0;
+            color: var(--secondary-color);
+        }
+        .benefits ul {
+            padding-left: 20px;
+        }
+        .benefits li {
+            margin-bottom: 5px;
+        }
+        .circle {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background-color: var(--danger-color);
+            margin: 20px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 24px;
+            transition: var(--transition);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .progress-container {
+            width: 100%;
+            background-color: rgba(236, 240, 241, 0.3);
+            border-radius: 5px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        [data-theme="dark"] .progress-container {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        .progress-bar {
+            height: 20px;
+            background-color: var(--accent-color);
+            border-radius: 5px;
+            width: 0%;
+            transition: width 1s linear;
+        }
+        
+        /* NOVI STILOVI ZA CO2 VJEŽBU */
+        .co2-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin: 25px 0;
+        }
+        
+        .phase-control {
+            background-color: var(--card-bg);
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid var(--border-color);
+            box-shadow: var(--shadow);
+        }
+        
+        .phase-control h3 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--secondary-color);
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+        
+        .phase-control h3 i {
+            font-size: 20px;
+        }
+        
+        .phase-control.inhale {
+            border-left: 5px solid var(--accent-color);
+        }
+        
+        .phase-control.exhale {
+            border-left: 5px solid var(--danger-color);
+        }
+        
+        .phase-control.hold {
+            border-left: 5px solid var(--warning-color);
+        }
+        
+        .phase-slider-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .phase-label {
+            min-width: 120px;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+        
+        .phase-slider {
+            flex: 1;
+            height: 25px;
+            -webkit-appearance: none;
+            background: rgba(236, 240, 241, 0.5);
+            border-radius: 5px;
+            outline: none;
+        }
+        
+        .phase-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .phase-slider.inhale-slider::-webkit-slider-thumb {
+            background: var(--accent-color);
+        }
+        
+        .phase-slider.exhale-slider::-webkit-slider-thumb {
+            background: var(--danger-color);
+        }
+        
+        .phase-slider.hold-slider::-webkit-slider-thumb {
+            background: var(--warning-color);
+        }
+        
+        .phase-value {
+            min-width: 50px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--secondary-color);
+        }
+        
+        .co2-settings-summary {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 25px 0;
+            padding: 20px;
+            background-color: rgba(155, 89, 182, 0.1);
+            border-radius: 10px;
+            border: 2px solid var(--co2-color);
+        }
+        
+        .setting-item {
+            text-align: center;
+            padding: 10px 15px;
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            min-width: 150px;
+        }
+        
+        .setting-value {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .setting-label {
+            font-size: 14px;
+            color: var(--text-color);
+            opacity: 0.8;
+        }
+        
+        .inhale-value {
+            color: var(--accent-color);
+        }
+        
+        .exhale-value {
+            color: var(--danger-color);
+        }
+        
+        .hold-value {
+            color: var(--warning-color);
+        }
+        
+        .co2-phase-display {
+            text-align: center;
+            font-size: 22px;
+            font-weight: bold;
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 10px;
+            background-color: var(--card-bg);
+            border: 2px solid var(--co2-color);
+            color: var(--co2-color);
+        }
+        
+        .co2-cycle-display {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .co2-cycle-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: var(--border-color);
+            transition: var(--transition);
+        }
+        
+        .co2-cycle-dot.active {
+            background-color: var(--co2-color);
+            transform: scale(1.2);
+        }
+        
+        .co2-circle {
+            background-color: var(--co2-color) !important;
+        }
+        
+        .co2-progress-bar {
+            background-color: var(--co2-color) !important;
+        }
+        
+        /* WIM HOF KONTROLE */
+        .wimhof-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .wimhof-controls button {
+            padding: 12px 20px;
+            font-size: 16px;
+            min-width: 120px;
+        }
+        
+        .wimhof-phase {
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            margin: 15px 0;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: rgba(52, 152, 219, 0.1);
+        }
+        
+        .breath-counter {
+            font-size: 20px;
+            text-align: center;
+            margin: 10px 0;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+        
+        .hold-timer {
+            font-size: 32px;
+            font-weight: bold;
+            text-align: center;
+            margin: 20px 0;
+            color: var(--danger-color);
+        }
+        
+        .global-settings {
+            background-color: var(--card-bg);
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+        .global-settings h3 {
+            margin-top: 0;
+            color: var(--secondary-color);
+        }
+        .cycles-slider-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        .cycles-label {
+            font-weight: bold;
+            color: var(--secondary-color);
+            min-width: 180px;
+            text-align: right;
+        }
+        input[type="range"] {
+            width: 200px;
+            height: 25px;
+            background: rgba(236, 240, 241, 0.5);
+            border-radius: 5px;
+            outline: none;
+            -webkit-appearance: none;
+            transition: var(--transition);
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 25px;
+            height: 25px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+        }
+        
+        .cycles-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--secondary-color);
+            min-width: 40px;
+            text-align: left;
+            transition: var(--transition);
+        }
+        .cycles-info {
+            font-size: 14px;
+            color: var(--text-color);
+            opacity: 0.8;
+            margin-top: 10px;
+            font-style: italic;
+        }
+        
+        /* "POKRENI VJEŽBU" GUMBI */
+        .exercise-container button {
+            width: 100%;
+            padding: 16px;
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 15px;
+            background-color: var(--accent-color);
+            border: none;
+            border-radius: 8px;
+            transition: var(--transition);
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+        }
+        
+        .exercise-container button:hover {
+            background-color: #219653;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.15);
+        }
+        
+        .exercise-container button:active {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .exercise-container button::after {
+            content: " ▶";
+            margin-left: 8px;
+            font-size: 16px;
+        }
+        
+        /* CO2 START GUMB */
+        .co2-start-btn {
+            background-color: var(--co2-color) !important;
+        }
+        
+        .co2-start-btn:hover {
+            background-color: #8e44ad !important;
+        }
+        
+        /* ANIMACIJE */
+        body {
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0.8; }
+            to { opacity: 1; }
+        }
+        
+        @media (max-width: 600px) {
+            .menu {
+                grid-template-columns: 1fr;
+            }
+            .cycles-slider-container {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .cycles-label {
+                text-align: center;
+                min-width: auto;
+            }
+            input[type="range"] {
+                width: 100%;
+                max-width: 250px;
+            }
+            
+            .phase-slider-container {
+                flex-direction: column;
+                gap: 10px;
+                align-items: flex-start;
+            }
+            
+            .phase-label {
+                min-width: auto;
+            }
+            
+            .co2-settings-summary {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .setting-item {
+                width: 100%;
+                max-width: 200px;
+            }
+            
+            .wimhof-controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .wimhof-controls button {
+                width: 100%;
+                max-width: 200px;
+            }
+            
+            /* Veći gumbi na mobitelu */
+            .exercise-container button {
+                padding: 18px;
+                font-size: 19px;
+            }
+            
+            .circle {
+                width: 180px;
+                height: 180px;
+                font-size: 22px;
+            }
+            
+            .app-header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body data-theme="light">
+    <div class="app-header">
+        <h1>🌬️ Vježbe disanja</h1>
+        <div class="theme-toggle" onclick="toggleTheme()">
+            <span class="icon sun-icon">☀️</span>
+            <div class="toggle-slider"></div>
+            <span class="icon moon-icon">🌙</span>
+        </div>
+    </div>
+    
+    <!-- Globalno podešavanje broja krugova -->
+    <div class="global-settings">
+        <h3>Broj krugova za sve vježbe:</h3>
+        <div class="cycles-slider-container">
+            <span class="cycles-label">Broj krugova:</span>
+            <input type="range" id="global-cycles" min="1" max="30" value="5">
+            <span class="cycles-value" id="cycles-value">5</span>
+        </div>
+        <div class="cycles-info">
+            <p>Ova postavka vrijedi za sve vježbe. 1-5 krugova = početnik, 6-15 = srednji nivo, 16-30 = napredni.</p>
+            <p><strong>Tipkovni prečaci:</strong> Ctrl + / - za broj krugova • T za tamni način</p>
+        </div>
+    </div>
+    
+    <div class="menu">
+        <button onclick="showExercise('deep')">Duboko disanje (4-7-8)</button>
+        <button onclick="showExercise('box')">Kvadratno disanje</button>
+        <button onclick="showExercise('alternate')">Alternativno disanje</button>
+        <button onclick="showExercise('kapalabhati')">Kapalabhati</button>
+        <button onclick="showExercise('bhramari')">Bhramari</button>
+        <button onclick="showExercise('wimhof')">Wim Hof</button>
+        <button onclick="showExercise('tummo')">Tummo</button>
+        <button onclick="showExercise('co2')" class="co2-btn">CO2 Tolerancija</button>
+    </div>
+    
+    <!-- DUBOKO DISANJE -->
+    <div id="deep" class="exercise-container">
+        <h2>Duboko disanje (4-7-8)</h2>
+        <div class="benefits">
+            <h3>Benefiti:</h3>
+            <ul>
+                <li>Smanjuje stres i anksioznost</li>
+                <li>Pomaže kod nesanice</li>
+                <li>Umiruje nervni sustav</li>
+                <li>Poboljšava koncentraciju</li>
+            </ul>
+        </div>
+        <div class="instructions">
+            <p>1. Udahni duboko kroz nos (4 sekunde)</p>
+            <p>2. Zadrži dah (7 sekundi)</p>
+            <p>3. Izdisaj kroz usta (8 sekundi)</p>
+            <p>Ponavljaj <span id="deep-cycle-count">5</span> puta.</p>
+        </div>
+        
+        <div class="cycle-counter" id="deep-cycle-counter">Krug: 0/5</div>
+        <div class="circle" id="deep-circle">SPREMAN</div>
+        <div class="timer" id="deep-timer"></div>
+        <div class="progress-container">
+            <div class="progress-bar" id="deep-progress"></div>
+        </div>
+        <button onclick="startDeepBreathing()">Pokreni vježbu</button>
+    </div>
+    
+    <!-- KVADRATNO DISANJE -->
+    <div id="box" class="exercise-container">
+        <h2>Kvadratno disanje</h2>
+        <div class="benefits">
+            <h3>Benefiti:</h3>
+            <ul>
+                <li>Balansira autonomni nervni sustav</li>
+                <li>Smanjuje stres u trenutku</li>
+                <li>Poboljšava fokus</li>
+                <li>Koristi se u vojskama i sportu</li>
+            </ul>
+        </div>
+        <div class="instructions">
+            <p>1. Udahni (4 sekunde)</p>
+            <p>2. Zadrži dah (4 sekunde)</p>
+            <p>3. Izdisaj (4 sekunde)</p>
+            <p>4. Zadrži prazna pluća (4 sekunde)</p>
+            <p>Ponavljaj <span id="box-cycle-count">5</span> puta.</p>
+        </div>
+        <div class="circle" id="box-circle">SPREMAN</div>
+        <div class="timer" id="box-timer"></div>
+        <div class="progress-container">
+            <div class="progress-bar" id="box-progress"></div>
+        </div>
+        <button onclick="startBoxBreathing()">Pokreni vježbu</button>
+    </div>
+    
+    <!-- ALTERNATIVNO DISANJE -->
+    <div id="alternate" class="exercise-container">
+        <h2>Alternativno disanje (Nadi Shodhana)</h2>
+        <div class="benefits">
+            <h3>Benefiti:</h3>
+            <ul>
+                <li>Uravnotežuje lijevu i desnu mozgovnu hemisferu</li>
+                <li>Poboljšava kognitivne funkcije</li>
+                <li>Smanjuje mentalni nemir</li>
+                <li>Povećava svjesnost disanja</li>
+            </ul>
+        </div>
+        <div class="instructions">
+            <p>1. Prstom zatvori desnu nosnicu</p>
+            <p>2. Udahni lijevom nosnicom (4 sekunde)</p>
+            <p>3. Zadrži dah (4 sekunde)</p>
+            <p>4. Otvori desnu, zatvori lijevu nosnicu</p>
+            <p>5. Izdisaj desnom nosnicom (6 sekundi)</p>
+            <p>Ponavljaj <span id="alt-cycle-count">5</span> puta.</p>
+        </div>
+        <div class="circle" id="alternate-circle">SPREMAN</div>
+        <div class="timer" id="alternate-timer"></div>
+        <div class="progress-container">
+            <div class="progress-bar" id="alternate-progress"></div>
+        </div>
+        <button onclick="startAlternateBreathing()">Pokreni vježbu</button>
+    </div>
+
+    <!-- KAPALABHATI -->
+    <div id="kapalabhati" class="exercise-container">
+        <h2>Kapalabhati (Osvježavajuće disanje)</h2>
+        <div class="benefits">
+            <h3>Benefiti:</h3>
+            <ul>
+                <li>Pročišćava pluća i dišne puteve</li>
+                <li>Povećava energiju i budnost</li>
+                <li>Poboljšava probavu</li>
+                <li>Jača trbušne mišiće</li>
+            </ul>
+        </div>
+        <div class="instructions">
+            <p>1. Udahni normalno kroz nos</p>
+            <p>2. Snažno izdiši kontrakcijom trbušnih mišića</p>
+            <p>3. Ponavljaj 30 brzih izdaha u 15 sekundi</p>
+            <p>4. Nakon serije, duboko udahni i zadrži 15-30 sekundi</p>
+            <p>5. Ponovi <span id="kap-cycle-count">5</span> serije</p>
+        </div>
+        <div class="circle" id="kapalabhati-circle">SPREMAN</div>
+        <div class="timer" id="kapalabhati-timer"></div>
+        <div class="progress-container">
+            <div class="progress-bar" id="kapalabhati-progress"></div>
+        </div>
+        <button onclick="startKapalabhati()">Pokreni vježbu</button>
+    </div>
+
+    <!-- BHRAMARI -->
+    <div id="bhramari" class="exercise-container">
+        <h2>Bhramari (Pčelinje disanje)</h2>
+        <div class="benefits">
+            <h3>Benefiti:</h3>
+            <ul>
+                <li>Umiruje um i smanjuje stres</li>
+                <li>Pomaže kod nesanice</li>
+                <li>Smanjuje krvni tlak</li>
+                <li>Poboljšava koncentraciju</li>
+            </ul>
+        </div>
+        <div class="instructions">
+            <p>1. Udahni duboko kroz nos</p>
+            <p>2. Prstima blago zatvori ušne kanale</p>
+            <p>3. Izdisaj uz brujanje poput pčele</p>
+            <p>4. Osjećaj vibracije u glavi</p>
+            <p>5. Ponavljaj <span id="bhr-cycle-count">5</span> puta</p>
+        </div>
+        <div class="circle" id="bhramari-circle">SPREMAN</div>
+        <div class="timer" id="bhramari-timer"></div>
+        <div class="progress-container">
+            <div class="progress-bar" id="bhramari-progress"></div>
+        </div>
+        <button onclick="startBhramari()">Pokreni vježbu</button>
+    </div>
+
+    <!-- WIM HOF -->
+    <div id="wimhof" class="exercise-container">
+        <h2>Wim Hof metoda</h2>
+        <div class="benefits">
+            <h3>Benefiti:</h3>
+            <ul>
+                <li>Povećava energiju i imunitet</li>
+                <li>Poboljšava kontrolu nad stresom</li>
+                <li>Povećava toleranciju na hladnoću</li>
+                <li>Poboljšava cirkulaciju</li>
+            </ul>
+        </div>
+        <div class="instructions">
+            <p><strong>Faza 1:</strong> 20-30 brzih udisaja i izdisaja u 60 sekundi</p>
+            <p><strong>Faza 2:</strong> Izdisaj i zadržavanje daha bez zraka (koliko god možeš), zatim pokreni iduću fazu</p>
+            <p><strong>Faza 3:</strong> Duboki udisaj i zadržavanje daha 15 sekundi</p>
+            <p>Ponovi ciklus <span id="wim-cycle-count">5</span> puta</p>
+        </div>
+        
+        <div class="cycle-counter" id="wimhof-cycle-counter">Krug: 0/5</div>
+        <div class="wimhof-phase" id="wimhof-phase">Priprema...</div>
+        <div class="circle" id="wimhof-circle">SPREMAN</div>
+        <div class="breath-counter" id="breath-counter" style="display: none;">Udisaji: <span id="breath-count">0</span>/30</div>
+        <div class="timer" id="wimhof-timer" style="display: none;"></div>
+        <div class="hold-timer" id="hold-timer" style="display: none;">00:00</div>
+        <div class="progress-container">
+            <div class="progress-bar" id="wimhof-progress"></div>
+        </div>
+        
+        <div class="wimhof-controls" id="wimhof-controls">
+            <button onclick="startWimHofPhase1()" id="start-phase1">Pokreni Fazu 1</button>
+            <button onclick="startWimHofPhase2()" id="start-phase2" style="display: none;">Zadrži Dah (Faza 2)</button>
+            <button onclick="startWimHofPhase3()" id="start-phase3" style="display: none;">Udahni i Zadrži (Faza 3)</button>
+        </div>
+        
+        <button onclick="resetWimHof()" style="background-color: var(--danger-color);">Resetiraj Vježbu</button>
+    </div>
+
+    <!-- TUMMO -->
+    <div id="tummo" class="exercise-container">
+        <h2>Tummo (Jogijsko disanje)</h2>
+        <div class="benefits">
+            <h3>Benefiti:</h3>
+            <ul>
+                <li>Generira unutarnju toplinu</li>
+                <li>Povećava svjesnost i koncentraciju</li>
+                <li>Duboka meditativna praksa</li>
+                <li>Poboljšava cirkulaciju</li>
+            </ul>
+        </div>
+        <div class="instructions">
+            <p>1. Udahni duboko kroz nos</p>
+            <p>2. Zadrži dah dok vizualiziraš toplinu u području pupka</p>
+            <p>3. Polako izdisaj kroz nos</p>
+            <p>4. Ponavljaj <span id="tum-cycle-count">5</span> puta</p>
+            <p>5. Kombiniraj s meditacijom</p>
+        </div>
+        <div class="circle" id="tummo-circle">SPREMAN</div>
+        <div class="timer" id="tummo-timer"></div>
+        <div class="progress-container">
+            <div class="progress-bar" id="tummo-progress"></div>
+        </div>
+        <button onclick="startTummo()">Pokreni vježbu</button>
+    </div>
+
+    <!-- NOVO: CO2 TOLERANCIJA -->
+    <div id="co2" class="exercise-container">
+        <h2>💨 CO2 Tolerancija (Kapno-metrijska vježba)</h2>
+        <div class="benefits">
+            <h3>Benefiti:</h3>
+            <ul>
+                <li>Povećava toleranciju na CO2 u krvi</li>
+                <li>Smanjuje osjećaj zadihe i panike</li>
+                <li>Poboljšava sportsku izdržljivost</li>
+                <li>Umiruje autonomni nervni sustav</li>
+                <li>Smanjuje učestalost disanja u mirovanju</li>
+            </ul>
+        </div>
+        
+        <div class="instructions">
+            <p><strong>Upute:</strong> Postavite trajanje svake faze prema vašoj trenutnoj toleranciji.</p>
+            <p>Počnite s kraćim vrijednostima i postupno povećavajte kako vam tolerancija raste.</p>
+        </div>
+        
+        <!-- Kontrole za podešavanje faza -->
+        <div class="co2-controls">
+            <!-- UDIŠAJ -->
+            <div class="phase-control inhale">
+                <h3><i class="fas fa-wind" style="color: var(--accent-color);"></i> 1. Udah</h3>
+                <div class="phase-slider-container">
+                    <span class="phase-label">Trajanje (sekunde):</span>
+                    <input type="range" class="phase-slider inhale-slider" id="inhale-slider" min="2" max="20" value="4">
+                    <span class="phase-value inhale-value" id="inhale-value">4s</span>
+                </div>
+                <div style="font-size: 14px; color: var(--text-color); opacity: 0.8; margin-top: 8px;">
+                    Normalan udah kroz nos.
+                </div>
+            </div>
+            
+            <!-- IZDIŠAJ -->
+            <div class="phase-control exhale">
+                <h3><i class="fas fa-wind" style="color: var(--danger-color);"></i> 2. Izdah</h3>
+                <div class="phase-slider-container">
+                    <span class="phase-label">Trajanje (sekunde):</span>
+                    <input type="range" class="phase-slider exhale-slider" id="exhale-slider" min="2" max="30" value="6">
+                    <span class="phase-value exhale-value" id="exhale-value">6s</span>
+                </div>
+                <div style="font-size: 14px; color: var(--text-color); opacity: 0.8; margin-top: 8px;">
+                    Potpuni, kontrolirani izdah.
+                </div>
+            </div>
+            
+            <!-- ZADRŽAVANJE -->
+            <div class="phase-control hold">
+                <h3><i class="fas fa-stopwatch" style="color: var(--warning-color);"></i> 3. Zadržavanje</h3>
+                <div class="phase-slider-container">
+                    <span class="phase-label">Trajanje (sekunde):</span>
+                    <input type="range" class="phase-slider hold-slider" id="hold-slider" min="3" max="60" value="15">
+                    <span class="phase-value hold-value" id="hold-value">15s</span>
+                </div>
+                <div style="font-size: 14px; color: var(--text-color); opacity: 0.8; margin-top: 8px;">
+                    Zadržavanje daha bez udisanja.
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sažetak postavki -->
+        <div class="co2-settings-summary">
+            <div class="setting-item">
+                <div class="setting-value inhale-value" id="summary-inhale">3s</div>
+                <div class="setting-label">Dijafragmalni udah</div>
+            </div>
+            <div class="setting-item">
+                <div class="setting-value exhale-value" id="summary-exhale">7s</div>
+                <div class="setting-label">Izdah</div>
+            </div>
+            <div class="setting-item">
+                <div class="setting-value hold-value" id="summary-hold">4s</div>
+                <div class="setting-label">Zadržavanje</div>
+            </div>
+            <div class="setting-item">
+                <div class="setting-value" id="co2-cycle-count" style="color: var(--co2-color);">5</div>
+                <div class="setting-label">Broj krugova</div>
+            </div>
+        </div>
+        
+        <!-- Brojač krugova -->
+        <div class="cycle-counter" id="co2-cycle-counter">
+            Krug: 0/5
+        </div>
+        
+        <!-- Prikaz trenutne faze -->
+        <div class="co2-phase-display" id="co2-phase-display">
+            Spremno za početak
+        </div>
+        
+        <!-- Vizualni prikaz kruga -->
+        <div class="co2-cycle-display" id="co2-cycle-display">
+            <!-- Točkice će se dinamički dodati -->
+        </div>
+        
+        <!-- Timer i kružni prikaz -->
+        <div class="circle co2-circle" id="co2-circle">
+            SPREMAN
+        </div>
+        
+        <div class="timer" id="co2-timer"></div>
+        
+        <div class="progress-container">
+            <div class="progress-bar co2-progress-bar" id="co2-progress"></div>
+        </div>
+        
+        <!-- Gumb za pokretanje -->
+        <button onclick="startCO2Exercise()" class="co2-start-btn">
+            <i class="fas fa-play-circle"></i> Pokreni CO2 vježbu
+        </button>
+    </div>
+
+    <script>
+        // Audio kontekst za generiranje zvučnih signala
+        let audioCtx;
+        try {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        } catch (e) {
+            console.log("Web Audio API nije podržan u ovom pregledniku");
+        }
+
+        // Funkcija za reprodukciju beep zvuka
+        function playBeep(duration = 200, frequency = 800, type = "sine") {
+            if (!audioCtx) return;
+            
+            try {
+                const oscillator = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                
+                oscillator.type = type;
+                oscillator.frequency.value = frequency;
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                
+                gainNode.gain.setValueAtTime(0.5, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration/1000);
+                
+                oscillator.start();
+                oscillator.stop(audioCtx.currentTime + duration/1000);
+            } catch (e) {
+                console.log("Greška pri reprodukciju zvuka:", e);
+            }
+        }
+
+        // Globalna varijabla za broj krugova
+        let globalCycles = 5;
+
+        // CO2 varijable
+        let co2InhaleTime = 4;
+        let co2ExhaleTime = 6;
+        let co2HoldTime = 15;
+        let co2Round = 0;
+        let co2Interval = null;
+        let isCO2Running = false;
+
+        // Funkcija za ažuriranje svih brojača krugova
+        function updateAllCycleCounts() {
+            const cycleElements = {
+                'deep-cycle-count': globalCycles,
+                'box-cycle-count': globalCycles,
+                'alt-cycle-count': globalCycles,
+                'kap-cycle-count': globalCycles,
+                'bhr-cycle-count': globalCycles,
+                'wim-cycle-count': globalCycles,
+                'tum-cycle-count': globalCycles,
+                'co2-cycle-count': globalCycles
+            };
+            
+            for (const [id, value] of Object.entries(cycleElements)) {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.textContent = value;
+                }
+            }
+            
+            // Ažuriraj vrijednost pokazivača
+            document.getElementById('cycles-value').textContent = globalCycles;
+        }
+
+        // TEMA - automatsko prepoznavanje vremena i spremanje u localStorage
+        function getCurrentTheme() {
+            const savedTheme = localStorage.getItem('breathing-theme');
+            if (savedTheme) return savedTheme;
+            
+            // Automatsko prepoznavanje vremena
+            const now = new Date();
+            const hour = now.getHours();
+            const isNightTime = hour >= 20 || hour <= 6; // 20:00 - 6:00
+            
+            return isNightTime ? 'dark' : 'light';
+        }
+
+        function setTheme(theme) {
+            document.body.setAttribute('data-theme', theme);
+            localStorage.setItem('breathing-theme', theme);
+            
+            // Ažuriraj ikone
+            const sunIcon = document.querySelector('.sun-icon');
+            const moonIcon = document.querySelector('.moon-icon');
+            
+            if (theme === 'dark') {
+                sunIcon.textContent = '🌙';
+                moonIcon.textContent = '☀️';
+            } else {
+                sunIcon.textContent = '☀️';
+                moonIcon.textContent = '🌙';
+            }
+        }
+
+        function toggleTheme() {
+            const currentTheme = document.body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            setTheme(newTheme);
+            
+            // Zvučna povratna informacija
+            playBeep(100, newTheme === 'dark' ? 500 : 700);
+        }
+
+        // Inicijalizacija pri učitavanju
+        window.onload = function() {
+            // Postavi temu
+            const initialTheme = getCurrentTheme();
+            setTheme(initialTheme);
+            
+            // Postavi početnu vrijednost slidera
+            const slider = document.getElementById('global-cycles');
+            slider.value = globalCycles;
+            updateAllCycleCounts();
+            
+            // Dodaj event listener na slider
+            slider.addEventListener('input', function() {
+                globalCycles = parseInt(this.value);
+                updateAllCycleCounts();
+                showFeedback();
+            });
+            
+            // CO2 slider event listeneri
+            document.getElementById('inhale-slider').addEventListener('input', function() {
+                co2InhaleTime = parseInt(this.value);
+                document.getElementById('inhale-value').textContent = co2InhaleTime + 's';
+                document.getElementById('summary-inhale').textContent = co2InhaleTime + 's';
+                playBeep(50, 600);
+            });
+            
+            document.getElementById('exhale-slider').addEventListener('input', function() {
+                co2ExhaleTime = parseInt(this.value);
+                document.getElementById('exhale-value').textContent = co2ExhaleTime + 's';
+                document.getElementById('summary-exhale').textContent = co2ExhaleTime + 's';
+                playBeep(50, 600);
+            });
+            
+            document.getElementById('hold-slider').addEventListener('input', function() {
+                co2HoldTime = parseInt(this.value);
+                document.getElementById('hold-value').textContent = co2HoldTime + 's';
+                document.getElementById('summary-hold').textContent = co2HoldTime + 's';
+                playBeep(50, 600);
+            });
+            
+            // Inicijaliziraj CO2 prikaz točkica
+            updateCO2CycleDots();
+            
+            // Dodaj event listener za tipkovnicu
+            document.addEventListener('keydown', function(e) {
+                // Ctrl + Plus/Minus za broj krugova
+                if (e.ctrlKey && !e.altKey && !e.shiftKey) {
+                    if (e.key === '+' || e.key === '=') {
+                        e.preventDefault();
+                        const slider = document.getElementById('global-cycles');
+                        const newValue = Math.min(parseInt(slider.value) + 1, 30);
+                        slider.value = newValue;
+                        globalCycles = newValue;
+                        updateAllCycleCounts();
+                        showFeedback();
+                    } else if (e.key === '-' || e.key === '_') {
+                        e.preventDefault();
+                        const slider = document.getElementById('global-cycles');
+                        const newValue = Math.max(parseInt(slider.value) - 1, 1);
+                        slider.value = newValue;
+                        globalCycles = newValue;
+                        updateAllCycleCounts();
+                        showFeedback();
+                    }
+                }
+                
+                // T za toggle teme
+                if (e.key === 't' || e.key === 'T') {
+                    e.preventDefault();
+                    toggleTheme();
+                }
+                
+                // C za CO2 vježbu
+                if (e.key === 'c' || e.key === 'C') {
+                    e.preventDefault();
+                    showExercise('co2');
+                }
+                
+                // SPACE za pauziranje/nastavljanje CO2 vježbe
+                if ((e.key === ' ' || e.key === 'Space') && document.getElementById('co2').classList.contains('active')) {
+                    e.preventDefault();
+                    if (isCO2Running) {
+                        stopCO2Exercise();
+                    } else {
+                        startCO2Exercise();
+                    }
+                }
+                
+                // ESC za zaustavljanje vježbe
+                if (e.key === 'Escape') {
+                    if (document.getElementById('co2').classList.contains('active')) {
+                        stopCO2Exercise();
+                    } else {
+                        location.reload();
+                    }
+                }
+            });
+        };
+
+        function updateCO2CycleDots() {
+            const container = document.getElementById('co2-cycle-display');
+            container.innerHTML = '';
+            
+            for (let i = 0; i < globalCycles; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'co2-cycle-dot';
+                if (i < co2Round) {
+                    dot.classList.add('active');
+                }
+                container.appendChild(dot);
+            }
+        }
+
+        function showFeedback() {
+            const valueDisplay = document.getElementById('cycles-value');
+            valueDisplay.style.transform = 'scale(1.3)';
+            valueDisplay.style.color = 'var(--danger-color)';
+            setTimeout(() => {
+                valueDisplay.style.transform = 'scale(1)';
+                valueDisplay.style.color = 'var(--secondary-color)';
+            }, 300);
+            
+            // Kratki zvučni signal za potvrdu
+            playBeep(100, 600);
+            
+            // Ažuriraj CO2 točkice
+            updateCO2CycleDots();
+        }
+
+        function showExercise(exerciseId) {
+            document.querySelectorAll('.exercise-container').forEach(div => {
+                div.classList.remove('active');
+            });
+            document.getElementById(exerciseId).classList.add('active');
+            
+            // Resetiraj vježbe ako prelazimo
+            if (exerciseId !== 'wimhof') {
+                resetWimHof();
+            }
+            if (exerciseId !== 'co2') {
+                stopCO2Exercise();
+            }
+        }
+
+        // CO2 FUNKCIJE
+        function startCO2Exercise() {
+            if (isCO2Running) return;
+            
+            isCO2Running = true;
+            co2Round = 0;
+            
+            // Resetiraj UI
+            document.getElementById('co2-circle').textContent = 'SPREMAN';
+            document.getElementById('co2-timer').textContent = '';
+            document.getElementById('co2-progress').style.width = '0%';
+            document.getElementById('co2-phase-display').textContent = 'Početak...';
+            
+            updateCO2CycleCounter();
+            updateCO2CycleDots();
+            
+            // Pokreni prvi krug
+            co2Round = 1;
+            updateCO2CycleCounter();
+            updateCO2CycleDots();
+            startCO2Cycle();
+            
+            playBeep(300, 800);
+        }
+
+        function stopCO2Exercise() {
+            if (!isCO2Running) return;
+            
+            isCO2Running = false;
+            if (co2Interval) {
+                clearInterval(co2Interval);
+                co2Interval = null;
+            }
+            
+            document.getElementById('co2-phase-display').textContent = 'Vježba zaustavljena';
+            document.getElementById('co2-circle').textContent = 'PAUZA';
+            document.getElementById('co2-circle').style.backgroundColor = 'var(--warning-color)';
+            
+            playBeep(300, 600);
+        }
+
+        function resetCO2Exercise() {
+            stopCO2Exercise();
+            
+            co2Round = 0;
+            updateCO2CycleCounter();
+            updateCO2CycleDots();
+            
+            document.getElementById('co2-circle').textContent = 'SPREMAN';
+            document.getElementById('co2-circle').style.backgroundColor = 'var(--co2-color)';
+            document.getElementById('co2-timer').textContent = '';
+            document.getElementById('co2-progress').style.width = '0%';
+            document.getElementById('co2-phase-display').textContent = 'Spremno za početak';
+        }
+
+        function updateCO2CycleCounter() {
+            const counter = document.getElementById('co2-cycle-counter');
+            if (counter) {
+                counter.textContent = `Krug: ${co2Round}/${globalCycles}`;
+                
+                if (co2Round === globalCycles) {
+                    counter.style.backgroundColor = "var(--accent-color)";
+                    counter.style.borderColor = "var(--accent-color)";
+                } else if (co2Round > globalCycles * 0.75) {
+                    counter.style.backgroundColor = "var(--warning-color)";
+                    counter.style.borderColor = "var(--warning-color)";
+                }
+            }
+        }
+
+        function startCO2Cycle() {
+            if (co2Round > globalCycles) {
+                // Završena vježba
+                document.getElementById('co2-phase-display').textContent = 'Vježba završena!';
+                document.getElementById('co2-circle').textContent = 'GOTOVO';
+                document.getElementById('co2-circle').style.backgroundColor = 'var(--accent-color)';
+                isCO2Running = false;
+                playBeep(500, 1200);
+                return;
+            }
+            
+            // Faza 1: Udah
+            document.getElementById('co2-phase-display').textContent = 'UDIŠI kroz nos';
+            document.getElementById('co2-circle').textContent = 'UDIŠI';
+            document.getElementById('co2-circle').style.backgroundColor = 'var(--accent-color)';
+            
+            let timeLeft = co2InhaleTime;
+            const timerElement = document.getElementById('co2-timer');
+            const progressBar = document.getElementById('co2-progress');
+            
+            timerElement.textContent = timeLeft;
+            progressBar.style.width = '0%';
+            
+            co2Interval = setInterval(() => {
+                timerElement.textContent = timeLeft;
+                
+                // Ažuriraj progress bar
+                const progress = 100 - ((timeLeft - 1) / co2InhaleTime * 100);
+                progressBar.style.width = `${progress}%`;
+                
+                if (timeLeft <= 1) {
+                    clearInterval(co2Interval);
+                    playBeep(300, 800);
+                    
+                    // Brzi prijelaz (samo 200ms umjesto 500ms)
+                    setTimeout(() => {
+                        // Faza 2: Izdah
+                        document.getElementById('co2-phase-display').textContent = 'IZDIŠI kroz nos';
+                        document.getElementById('co2-circle').textContent = 'IZDIŠI';
+                        document.getElementById('co2-circle').style.backgroundColor = 'var(--danger-color)';
+                        
+                        timeLeft = co2ExhaleTime;
+                        timerElement.textContent = timeLeft;
+                        progressBar.style.width = '0%';
+                        
+                        co2Interval = setInterval(() => {
+                            timerElement.textContent = timeLeft;
+                            
+                            // Ažuriraj progress bar
+                            const progress = 100 - ((timeLeft - 1) / co2ExhaleTime * 100);
+                            progressBar.style.width = `${progress}%`;
+                            
+                            if (timeLeft <= 1) {
+                                clearInterval(co2Interval);
+                                playBeep(300, 800);
+                                
+                                // Brzi prijelaz (samo 200ms umjesto 500ms)
+                                setTimeout(() => {
+                                    // Faza 3: Zadržavanje
+                                    document.getElementById('co2-phase-display').textContent = 'ZADRŽI DAH';
+                                    document.getElementById('co2-circle').textContent = 'ZADRŽI';
+                                    document.getElementById('co2-circle').style.backgroundColor = 'var(--warning-color)';
+                                    
+                                    timeLeft = co2HoldTime;
+                                    timerElement.textContent = timeLeft;
+                                    progressBar.style.width = '0%';
+                                    
+                                    co2Interval = setInterval(() => {
+                                        timerElement.textContent = timeLeft;
+                                        
+                                        // Ažuriraj progress bar
+                                        const progress = 100 - ((timeLeft - 1) / co2HoldTime * 100);
+                                        progressBar.style.width = `${progress}%`;
+                                        
+                                        // Zvuk za posljednjih 5 sekundi
+                                        if (timeLeft <= 6 && timeLeft > 1) {
+                                            playBeep(100, 600);
+                                        }
+                                        
+                                        if (timeLeft <= 1) {
+                                            clearInterval(co2Interval);
+                                            playBeep(500, 800);
+                                            
+                                            // Završio jedan cijeli krug
+                                            updateCO2CycleDots();
+                                            
+                                            // Ako imamo još krugova, nastavi
+                                            if (co2Round < globalCycles) {
+                                                co2Round++;
+                                                updateCO2CycleCounter();
+                                                
+                                                // Kraća pauza prije sljedećeg kruga (1 sekunda umjesto 2)
+                                                setTimeout(() => {
+                                                    document.getElementById('co2-phase-display').textContent = 'Priprema za sljedeći krug...';
+                                                    document.getElementById('co2-circle').textContent = 'SPREMAN';
+                                                    document.getElementById('co2-circle').style.backgroundColor = 'var(--co2-color)';
+                                                    timerElement.textContent = '';
+                                                    progressBar.style.width = '0%';
+                                                    
+                                                    setTimeout(() => {
+                                                        startCO2Cycle();
+                                                    }, 800); // 800ms umjesto 2000ms
+                                                }, 500); // 500ms umjesto 1000ms
+                                            } else {
+                                                // Završena cijela vježba
+                                                document.getElementById('co2-phase-display').textContent = 'Vježba završena! Odmorite se.';
+                                                document.getElementById('co2-circle').textContent = 'GOTOVO';
+                                                document.getElementById('co2-circle').style.backgroundColor = 'var(--accent-color)';
+                                                timerElement.textContent = '';
+                                                progressBar.style.width = '0%';
+                                                isCO2Running = false;
+                                            }
+                                        }
+                                        timeLeft--;
+                                    }, 1000);
+                                }, 200);
+                            }
+                            timeLeft--;
+                        }, 1000);
+                    }, 200);
+                }
+                timeLeft--;
+            }, 1000);
+        }
+
+        // WIM HOF FUNKCIJE (ostaje isto)
+        let wimhofRound = 0;
+        let wimhofPhase = 0;
+        let breathCount = 0;
+        let phase1Timer = null;
+        let phase2StartTime = null;
+        let phase2Timer = null;
+        let phase3Timer = null;
+
+        function resetWimHof() {
+            wimhofRound = 0;
+            wimhofPhase = 0;
+            breathCount = 0;
+            
+            if (phase1Timer) clearTimeout(phase1Timer);
+            if (phase2Timer) clearInterval(phase2Timer);
+            if (phase3Timer) clearTimeout(phase3Timer);
+            
+            // Resetiraj UI
+            document.getElementById('wimhof-phase').textContent = 'Priprema...';
+            document.getElementById('wimhof-circle').textContent = 'SPREMAN';
+            document.getElementById('wimhof-circle').style.backgroundColor = 'var(--danger-color)';
+            document.getElementById('breath-counter').style.display = 'none';
+            document.getElementById('wimhof-timer').style.display = 'none';
+            document.getElementById('hold-timer').style.display = 'none';
+            document.getElementById('wimhof-progress').style.width = '0%';
+            
+            // Resetiraj gumbe
+            document.getElementById('start-phase1').style.display = 'block';
+            document.getElementById('start-phase2').style.display = 'none';
+            document.getElementById('start-phase3').style.display = 'none';
+            
+            // Ažuriraj brojač krugova
+            updateWimhofCycleCounter();
+        }
+
+        function updateWimhofCycleCounter() {
+            const counter = document.getElementById('wimhof-cycle-counter');
+            if (counter) {
+                counter.textContent = `Krug: ${wimhofRound}/${globalCycles}`;
+                
+                if (wimhofRound === globalCycles) {
+                    counter.style.backgroundColor = "var(--accent-color)";
+                    counter.style.borderColor = "var(--accent-color)";
+                } else if (wimhofRound > globalCycles * 0.75) {
+                    counter.style.backgroundColor = "var(--warning-color)";
+                    counter.style.borderColor = "var(--warning-color)";
+                }
+            }
+        }
+
+        function startWimHofPhase1() {
+            if (wimhofRound >= globalCycles) {
+                document.getElementById('wimhof-phase').textContent = 'Vježba završena!';
+                document.getElementById('wimhof-circle').textContent = 'GOTOVO';
+                document.getElementById('wimhof-circle').style.backgroundColor = 'var(--accent-color)';
+                playBeep(500, 1200);
+                return;
+            }
+            
+            wimhofRound++;
+            updateWimhofCycleCounter();
+            
+            wimhofPhase = 1;
+            breathCount = 0;
+            
+            // Ažuriraj UI
+            document.getElementById('wimhof-phase').textContent = 'FAZA 1: Brzo disanje (20-30 udisaja)';
+            document.getElementById('wimhof-circle').textContent = 'BRZO DISANJE';
+            document.getElementById('wimhof-circle').style.backgroundColor = 'var(--primary-color)';
+            document.getElementById('breath-counter').style.display = 'block';
+            document.getElementById('breath-count').textContent = '0';
+            document.getElementById('wimhof-timer').style.display = 'block';
+            document.getElementById('wimhof-timer').textContent = '60';
+            document.getElementById('hold-timer').style.display = 'none';
+            
+            // Sakrij/pokaži gumbe
+            document.getElementById('start-phase1').style.display = 'none';
+            document.getElementById('start-phase2').style.display = 'block';
+            document.getElementById('start-phase3').style.display = 'none';
+            
+            // Pokreni tajmer za 60 sekundi
+            let timeLeft = 60;
+            const timerElement = document.getElementById('wimhof-timer');
+            const progressBar = document.getElementById('wimhof-progress');
+            
+            phase1Timer = setInterval(() => {
+                timerElement.textContent = timeLeft;
+                
+                // Ažuriraj progress bar
+                const progress = 100 - ((timeLeft - 1) / 60 * 100);
+                progressBar.style.width = `${progress}%`;
+                
+                if (timeLeft <= 1) {
+                    clearInterval(phase1Timer);
+                    // Automatski prelazi u fazu 2 nakon 60 sekundi
+                    startWimHofPhase2();
+                }
+                timeLeft--;
+            }, 1000);
+            
+            playBeep(300, 800);
+        }
+
+        function countBreath() {
+            if (wimhofPhase !== 1) return;
+            
+            breathCount++;
+            document.getElementById('breath-count').textContent = breathCount;
+            
+            // Svaki 5. udisaj dobije zvučnu potvrdu
+            if (breathCount % 5 === 0) {
+                playBeep(100, 600);
+            }
+            
+            // Ako je dosegao 30 udisaja, može prijeći u fazu 2
+            if (breathCount >= 30) {
+                document.getElementById('start-phase2').style.backgroundColor = 'var(--accent-color)';
+            }
+        }
+
+        function startWimHofPhase2() {
+            if (phase1Timer) {
+                clearInterval(phase1Timer);
+                phase1Timer = null;
+            }
+            
+            wimhofPhase = 2;
+            
+            // Ažuriraj UI
+            document.getElementById('wimhof-phase').textContent = 'FAZA 2: Izdisaj i zadrži dah (koliko god možeš)';
+            document.getElementById('wimhof-circle').textContent = 'ZADRŽI';
+            document.getElementById('wimhof-circle').style.backgroundColor = 'var(--danger-color)';
+            document.getElementById('breath-counter').style.display = 'none';
+            document.getElementById('wimhof-timer').style.display = 'none';
+            document.getElementById('hold-timer').style.display = 'block';
+            document.getElementById('hold-timer').textContent = '00:00';
+            
+            // Sakrij/pokaži gumbe
+            document.getElementById('start-phase1').style.display = 'none';
+            document.getElementById('start-phase2').style.display = 'none';
+            document.getElementById('start-phase3').style.display = 'block';
+            
+            // Pokreni stopwatch za zadržavanje daha
+            phase2StartTime = Date.now();
+            phase2Timer = setInterval(() => {
+                const elapsed = Math.floor((Date.now() - phase2StartTime) / 1000);
+                const minutes = Math.floor(elapsed / 60);
+                const seconds = elapsed % 60;
+                document.getElementById('hold-timer').textContent = 
+                    `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }, 100);
+            
+            playBeep(300, 600);
+        }
+
+        function startWimHofPhase3() {
+            if (phase2Timer) {
+                clearInterval(phase2Timer);
+                phase2Timer = null;
+            }
+            
+            wimhofPhase = 3;
+            
+            // Ažuriraj UI
+            document.getElementById('wimhof-phase').textContent = 'FAZA 3: Duboki udisaj i zadrži 15 sekundi';
+            document.getElementById('wimhof-circle').textContent = 'UDAHNI I ZADRŽI';
+            document.getElementById('wimhof-circle').style.backgroundColor = 'var(--primary-color)';
+            document.getElementById('hold-timer').style.display = 'block';
+            document.getElementById('hold-timer').textContent = '15';
+            
+            // Sakrij/pokaži gumbe
+            document.getElementById('start-phase1').style.display = 'block';
+            document.getElementById('start-phase2').style.display = 'none';
+            document.getElementById('start-phase3').style.display = 'none';
+            
+            // Pokreni tajmer od 15 sekundi
+            let timeLeft = 15;
+            const holdTimerElement = document.getElementById('hold-timer');
+            const progressBar = document.getElementById('wimhof-progress');
+            
+            // Resetiraj progress bar
+            progressBar.style.width = '0%';
+            
+            phase3Timer = setInterval(() => {
+                holdTimerElement.textContent = timeLeft;
+                
+                // Ažuriraj progress bar
+                const progress = 100 - ((timeLeft - 1) / 15 * 100);
+                progressBar.style.width = `${progress}%`;
+                
+                if (timeLeft <= 1) {
+                    clearInterval(phase3Timer);
+                    
+                    // Završi ovaj krug i pripremi za sljedeći
+                    playBeep(500, 1200);
+                    
+                    // Ako imamo još krugova, pripremi za sljedeći
+                    if (wimhofRound < globalCycles) {
+                        setTimeout(() => {
+                            document.getElementById('wimhof-phase').textContent = 'Priprema za sljedeći krug...';
+                            document.getElementById('wimhof-circle').textContent = 'SPREMAN';
+                            document.getElementById('wimhof-circle').style.backgroundColor = 'var(--danger-color)';
+                            document.getElementById('hold-timer').style.display = 'none';
+                            progressBar.style.width = '0%';
+                            
+                            // Kratka pauza prije sljedećeg kruga
+                            setTimeout(() => {
+                                startWimHofPhase1();
+                            }, 1000);
+                        }, 500);
+                    } else {
+                        // Završena cijela vježba
+                        document.getElementById('wimhof-phase').textContent = 'Vježba završena! Odmorite se.';
+                        document.getElementById('wimhof-circle').textContent = 'GOTOVO';
+                        document.getElementById('wimhof-circle').style.backgroundColor = 'var(--accent-color)';
+                        document.getElementById('hold-timer').style.display = 'none';
+                        document.getElementById('start-phase1').style.display = 'none';
+                    }
+                }
+                timeLeft--;
+            }, 1000);
+            
+            playBeep(300, 800);
+        }
+
+        // OSTALE VJEŽBE - POBOLJŠANE FUNKCIJE
+        function startDeepBreathing() {
+            const circle = document.getElementById('deep-circle');
+            const timer = document.getElementById('deep-timer');
+            const progressBar = document.getElementById('deep-progress');
+            const cycleCounter = document.getElementById('deep-cycle-counter');
+            
+            let cycles = 0;
+            const totalCycles = globalCycles;
+            
+            cycles = 0;
+            progressBar.style.width = "0%";
+            circle.textContent = "SPREMAN";
+            circle.style.backgroundColor = "var(--danger-color)";
+            
+            function updateCycleCounter() {
+                cycleCounter.textContent = `Krug: ${cycles}/${totalCycles}`;
+            }
+            
+            updateCycleCounter();
+            
+            function deepBreathCycle() {
+                if (cycles >= totalCycles) {
+                    circle.textContent = "GOTOVO";
+                    circle.style.backgroundColor = "var(--accent-color)";
+                    timer.textContent = "";
+                    cycleCounter.textContent = "Vježba završena!";
+                    cycleCounter.style.backgroundColor = "var(--accent-color)";
+                    cycleCounter.style.borderColor = "var(--accent-color)";
+                    playBeep(500, 1200);
+                    return;
+                }
+                
+                cycles++;
+                updateCycleCounter();
+                
+                if (cycles === totalCycles) {
+                    cycleCounter.style.backgroundColor = "var(--accent-color)";
+                    cycleCounter.style.borderColor = "var(--accent-color)";
+                } else if (cycles > totalCycles * 0.75) {
+                    cycleCounter.style.backgroundColor = "var(--warning-color)";
+                    cycleCounter.style.borderColor = "var(--warning-color)";
+                }
+                
+                circle.textContent = "UDIŠI";
+                circle.style.backgroundColor = "var(--primary-color)";
+                animateProgress(4, "deep-timer", () => {
+                    playBeep(300, 800);
+                    circle.textContent = "ZADRŽI";
+                    circle.style.backgroundColor = "#9b59b6";
+                    animateProgress(7, "deep-timer", () => {
+                        playBeep(300, 800);
+                        circle.textContent = "IZDIŠI";
+                        circle.style.backgroundColor = "var(--danger-color)";
+                        animateProgress(8, "deep-timer", () => {
+                            playBeep(300, 800);
+                            setTimeout(deepBreathCycle, 300);
+                        });
+                    });
+                });
+            }
+            
+            deepBreathCycle();
+        }
+
+        function startBoxBreathing() {
+            const circle = document.getElementById('box-circle');
+            const timer = document.getElementById('box-timer');
+            const progressBar = document.getElementById('box-progress');
+            const cycleCounter = document.getElementById('box-cycle-counter');
+            
+            let cycles = 0;
+            const totalCycles = globalCycles;
+            
+            cycles = 0;
+            progressBar.style.width = "0%";
+            circle.textContent = "SPREMAN";
+            circle.style.backgroundColor = "var(--danger-color)";
+            
+            function updateCycleCounter() {
+                if (cycleCounter) {
+                    cycleCounter.textContent = `Krug: ${cycles}/${totalCycles}`;
+                }
+            }
+            
+            updateCycleCounter();
+            
+            function boxBreathCycle() {
+                if (cycles >= totalCycles) {
+                    circle.textContent = "GOTOVO";
+                    circle.style.backgroundColor = "var(--accent-color)";
+                    timer.textContent = "";
+                    if (cycleCounter) {
+                        cycleCounter.textContent = "Vježba završena!";
+                        cycleCounter.style.backgroundColor = "var(--accent-color)";
+                        cycleCounter.style.borderColor = "var(--accent-color)";
+                    }
+                    playBeep(500, 1200);
+                    return;
+                }
+                
+                cycles++;
+                updateCycleCounter();
+                
+                if (cycles === totalCycles && cycleCounter) {
+                    cycleCounter.style.backgroundColor = "var(--accent-color)";
+                    cycleCounter.style.borderColor = "var(--accent-color)";
+                } else if (cycles > totalCycles * 0.75 && cycleCounter) {
+                    cycleCounter.style.backgroundColor = "var(--warning-color)";
+                    cycleCounter.style.borderColor = "var(--warning-color)";
+                }
+                
+                circle.textContent = "UDIŠI";
+                circle.style.backgroundColor = "var(--primary-color)";
+                animateProgress(4, "box-timer", () => {
+                    playBeep(300, 800);
+                    circle.textContent = "ZADRŽI";
+                    circle.style.backgroundColor = "#9b59b6";
+                    animateProgress(4, "box-timer", () => {
+                        playBeep(300, 800);
+                        circle.textContent = "IZDIŠI";
+                        circle.style.backgroundColor = "var(--danger-color)";
+                        animateProgress(4, "box-timer", () => {
+                            playBeep(300, 800);
+                            circle.textContent = "PAUZA";
+                            circle.style.backgroundColor = "var(--warning-color)";
+                            animateProgress(4, "box-timer", () => {
+                                playBeep(300, 800);
+                                setTimeout(boxBreathCycle, 300);
+                            });
+                        });
+                    });
+                });
+            }
+            
+            boxBreathCycle();
+        }
+
+        function startAlternateBreathing() {
+            const circle = document.getElementById('alternate-circle');
+            const timer = document.getElementById('alternate-timer');
+            const progressBar = document.getElementById('alternate-progress');
+            const cycleCounter = document.getElementById('alternate-cycle-counter');
+            
+            let cycles = 0;
+            const totalCycles = globalCycles;
+            
+            cycles = 0;
+            progressBar.style.width = "0%";
+            circle.textContent = "SPREMAN";
+            circle.style.backgroundColor = "var(--danger-color)";
+            
+            function updateCycleCounter() {
+                if (cycleCounter) {
+                    cycleCounter.textContent = `Krug: ${cycles}/${totalCycles}`;
+                }
+            }
+            
+            updateCycleCounter();
+            
+            function alternateBreathCycle() {
+                if (cycles >= totalCycles) {
+                    circle.textContent = "GOTOVO";
+                    circle.style.backgroundColor = "var(--accent-color)";
+                    timer.textContent = "";
+                    if (cycleCounter) {
+                        cycleCounter.textContent = "Vježba završena!";
+                        cycleCounter.style.backgroundColor = "var(--accent-color)";
+                        cycleCounter.style.borderColor = "var(--accent-color)";
+                    }
+                    playBeep(500, 1200);
+                    return;
+                }
+                
+                cycles++;
+                updateCycleCounter();
+                
+                if (cycles === totalCycles && cycleCounter) {
+                    cycleCounter.style.backgroundColor = "var(--accent-color)";
+                    cycleCounter.style.borderColor = "var(--accent-color)";
+                } else if (cycles > totalCycles * 0.75 && cycleCounter) {
+                    cycleCounter.style.backgroundColor = "var(--warning-color)";
+                    cycleCounter.style.borderColor = "var(--warning-color)";
+                }
+                
+                circle.textContent = "UDIŠI LIJEVOM";
+                circle.style.backgroundColor = "var(--primary-color)";
+                animateProgress(4, "alternate-timer", () => {
+                    playBeep(300, 800);
+                    circle.textContent = "ZADRŽI";
+                    circle.style.backgroundColor = "#9b59b6";
+                    animateProgress(4, "alternate-timer", () => {
+                        playBeep(300, 800);
+                        circle.textContent = "IZDIŠI DESNOM";
+                        circle.style.backgroundColor = "var(--danger-color)";
+                        animateProgress(6, "alternate-timer", () => {
+                            playBeep(300, 800);
+                            setTimeout(alternateBreathCycle, 300);
+                        });
+                    });
+                });
+            }
+            
+            alternateBreathCycle();
+        }
+
+        function startKapalabhati() {
+            const circle = document.getElementById('kapalabhati-circle');
+            const timer = document.getElementById('kapalabhati-timer');
+            const progressBar = document.getElementById('kapalabhati-progress');
+            const cycleCounter = document.getElementById('kapalabhati-cycle-counter');
+            
+            let rounds = 0;
+            const totalRounds = globalCycles;
+            
+            rounds = 0;
+            progressBar.style.width = "0%";
+            circle.textContent = "SPREMAN";
+            circle.style.backgroundColor = "var(--danger-color)";
+            
+            function updateCycleCounter() {
+                if (cycleCounter) {
+                    cycleCounter.textContent = `Serija: ${rounds}/${totalRounds}`;
+                }
+            }
+            
+            updateCycleCounter();
+            
+            function round() {
+                if (rounds >= totalRounds) {
+                    circle.textContent = "GOTOVO";
+                    circle.style.backgroundColor = "var(--accent-color)";
+                    timer.textContent = "";
+                    if (cycleCounter) {
+                        cycleCounter.textContent = "Vježba završena!";
+                        cycleCounter.style.backgroundColor = "var(--accent-color)";
+                        cycleCounter.style.borderColor = "var(--accent-color)";
+                    }
+                    playBeep(500, 1200);
+                    return;
+                }
+                
+                rounds++;
+                updateCycleCounter();
+                
+                if (rounds === totalRounds && cycleCounter) {
+                    cycleCounter.style.backgroundColor = "var(--accent-color)";
+                    cycleCounter.style.borderColor = "var(--accent-color)";
+                } else if (rounds > totalRounds * 0.75 && cycleCounter) {
+                    cycleCounter.style.backgroundColor = "var(--warning-color)";
+                    cycleCounter.style.borderColor = "var(--warning-color)";
+                }
+                
+                circle.textContent = "BRZO UDIŠI I IZDIŠI";
+                circle.style.backgroundColor = "var(--danger-color)";
+                animateProgress(15, "kapalabhati-timer", () => {
+                    playBeep(300, 800);
+                    circle.textContent = "UDAHNI I ZADRŽI";
+                    circle.style.backgroundColor = "#9b59b6";
+                    animateProgress(15, "kapalabhati-timer", () => {
+                        playBeep(300, 800);
+                        setTimeout(round, 300);
+                    });
+                });
+            }
+            
+            round();
+        }
+
+        function startBhramari() {
+            const circle = document.getElementById('bhramari-circle');
+            const timer = document.getElementById('bhramari-timer');
+            const progressBar = document.getElementById('bhramari-progress');
+            const cycleCounter = document.getElementById('bhramari-cycle-counter');
+            
+            let cycles = 0;
+            const totalCycles = globalCycles;
+            
+            cycles = 0;
+            progressBar.style.width = "0%";
+            circle.textContent = "SPREMAN";
+            circle.style.backgroundColor = "var(--danger-color)";
+            
+            function updateCycleCounter() {
+                if (cycleCounter) {
+                    cycleCounter.textContent = `Krug: ${cycles}/${totalCycles}`;
+                }
+            }
+            
+            updateCycleCounter();
+            
+            function bhramariCycle() {
+                if (cycles >= totalCycles) {
+                    circle.textContent = "GOTOVO";
+                    circle.style.backgroundColor = "var(--accent-color)";
+                    timer.textContent = "";
+                    if (cycleCounter) {
+                        cycleCounter.textContent = "Vježba završena!";
+                        cycleCounter.style.backgroundColor = "var(--accent-color)";
+                        cycleCounter.style.borderColor = "var(--accent-color)";
+                    }
+                    playBeep(500, 1200);
+                    return;
+                }
+                
+                cycles++;
+                updateCycleCounter();
+                
+                if (cycles === totalCycles && cycleCounter) {
+                    cycleCounter.style.backgroundColor = "var(--accent-color)";
+                    cycleCounter.style.borderColor = "var(--accent-color)";
+                } else if (cycles > totalCycles * 0.75 && cycleCounter) {
+                    cycleCounter.style.backgroundColor = "var(--warning-color)";
+                    cycleCounter.style.borderColor = "var(--warning-color)";
+                }
+                
+                circle.textContent = "UDIŠI";
+                circle.style.backgroundColor = "var(--primary-color)";
+                animateProgress(4, "bhramari-timer", () => {
+                    playBeep(300, 800);
+                    circle.textContent = "BRUJ...";
+                    circle.style.backgroundColor = "#9b59b6";
+                    animateProgress(8, "bhramari-timer", () => {
+                        playBeep(300, 800);
+                        setTimeout(bhramariCycle, 300);
+                    });
+                });
+            }
+            
+            bhramariCycle();
+        }
+
+        function startTummo() {
+            const circle = document.getElementById('tummo-circle');
+            const timer = document.getElementById('tummo-timer');
+            const progressBar = document.getElementById('tummo-progress');
+            const cycleCounter = document.getElementById('tummo-cycle-counter');
+            
+            let cycles = 0;
+            const totalCycles = globalCycles;
+            
+            cycles = 0;
+            progressBar.style.width = "0%";
+            circle.textContent = "SPREMAN";
+            circle.style.backgroundColor = "var(--danger-color)";
+            
+            function updateCycleCounter() {
+                if (cycleCounter) {
+                    cycleCounter.textContent = `Krug: ${cycles}/${totalCycles}`;
+                }
+            }
+            
+            updateCycleCounter();
+            
+            function tummoCycle() {
+                if (cycles >= totalCycles) {
+                    circle.textContent = "GOTOVO";
+                    circle.style.backgroundColor = "var(--accent-color)";
+                    timer.textContent = "";
+                    if (cycleCounter) {
+                        cycleCounter.textContent = "Vježba završena!";
+                        cycleCounter.style.backgroundColor = "var(--accent-color)";
+                        cycleCounter.style.borderColor = "var(--accent-color)";
+                    }
+                    playBeep(500, 1200);
+                    return;
+                }
+                
+                cycles++;
+                updateCycleCounter();
+                
+                if (cycles === totalCycles && cycleCounter) {
+                    cycleCounter.style.backgroundColor = "var(--accent-color)";
+                    cycleCounter.style.borderColor = "var(--accent-color)";
+                } else if (cycles > totalCycles * 0.75 && cycleCounter) {
+                    cycleCounter.style.backgroundColor = "var(--warning-color)";
+                    cycleCounter.style.borderColor = "var(--warning-color)";
+                }
+                
+                circle.textContent = "UDIŠI + VIZUALIZIRAJ";
+                circle.style.backgroundColor = "var(--primary-color)";
+                animateProgress(6, "tummo-timer", () => {
+                    playBeep(300, 800);
+                    circle.textContent = "ZADRŽI + KONCENTRIRAJ";
+                    circle.style.backgroundColor = "#9b59b6";
+                    animateProgress(10, "tummo-timer", () => {
+                        playBeep(300, 800);
+                        circle.textContent = "IZDIŠI + OPUSTI";
+                        circle.style.backgroundColor = "var(--danger-color)";
+                        animateProgress(8, "tummo-timer", () => {
+                            playBeep(300, 800);
+                            setTimeout(tummoCycle, 300);
+                        });
+                    });
+                });
+            }
+            
+            tummoCycle();
+        }
+
+        // POBOLJŠANA POMOĆNA FUNKCIJA ZA ANIMACIJU (bez nulte sekunde)
+        function animateProgress(duration, timerId, callback) {
+            const timer = document.getElementById(timerId);
+            const progressBar = timerId.replace('timer', 'progress');
+            const bar = document.getElementById(progressBar);
+            
+            let timeLeft = duration;
+            const interval = setInterval(() => {
+                timer.textContent = timeLeft;
+                const progress = 100 - ((timeLeft - 1) / duration * 100);
+                if (bar) bar.style.width = `${progress}%`;
+                
+                if (timeLeft <= 1) {
+                    clearInterval(interval);
+                    if (bar) bar.style.width = "0%";
+                    if (callback) callback();
+                }
+                timeLeft--;
+            }, 1000);
+        }
+
+        // Prikaži prvu vježbu po defaultu
+        showExercise('deep');
+    </script>
+</body>
+</html>
