@@ -711,12 +711,11 @@
         <h3>Broj krugova za sve vježbe:</h3>
         <div class="cycles-slider-container">
             <span class="cycles-label">Broj krugova:</span>
-            <input type="range" id="global-cycles" min="1" max="30" value="5">
+            <input type="range" id="global-cycles" min="1" max="50" value="5">
             <span class="cycles-value" id="cycles-value">5</span>
         </div>
         <div class="cycles-info">
-            <p>Ova postavka vrijedi za sve vježbe. 1-5 krugova = početnik, 6-15 = srednji nivo, 16-30 = napredni.</p>
-            <p><strong>Tipkovni prečaci:</strong> Ctrl + / - za broj krugova • T za tamni način</p>
+            <p>Ova postavka vrijedi za sve vježbe. 1-15 krugova = početnik, 15-30 = srednji nivo, 30-50 = napredni.</p>
         </div>
     </div>
     
@@ -725,9 +724,7 @@
         <button onclick="showExercise('box')">Kvadratno disanje</button>
         <button onclick="showExercise('alternate')">Alternativno disanje</button>
         <button onclick="showExercise('kapalabhati')">Kapalabhati</button>
-        <button onclick="showExercise('bhramari')">Bhramari</button>
         <button onclick="showExercise('wimhof')">Wim Hof</button>
-        <button onclick="showExercise('tummo')">Tummo</button>
         <button onclick="showExercise('co2')" class="co2-btn">CO2 Tolerancija</button>
     </div>
     
@@ -778,6 +775,8 @@
             <p>4. Zadrži prazna pluća (4 sekunde)</p>
             <p>Ponavljaj <span id="box-cycle-count">5</span> puta.</p>
         </div>
+        
+        <div class="cycle-counter" id="box-cycle-counter">Krug: 0/5</div>
         <div class="circle" id="box-circle">SPREMAN</div>
         <div class="timer" id="box-timer"></div>
         <div class="progress-container">
@@ -806,6 +805,8 @@
             <p>5. Izdah desnom nosnicom (6 sekundi)</p>
             <p>Ponavljaj <span id="alt-cycle-count">5</span> puta.</p>
         </div>
+        
+        <div class="cycle-counter" id="alternate-cycle-counter">Krug: 0/5</div>
         <div class="circle" id="alternate-circle">SPREMAN</div>
         <div class="timer" id="alternate-timer"></div>
         <div class="progress-container">
@@ -833,39 +834,14 @@
             <p>4. Nakon serije, duboko udahni i zadrži 15-30 sekundi</p>
             <p>5. Ponovi <span id="kap-cycle-count">5</span> serije</p>
         </div>
+        
+        <div class="cycle-counter" id="kapalabhati-cycle-counter">Serija: 0/5</div>
         <div class="circle" id="kapalabhati-circle">SPREMAN</div>
         <div class="timer" id="kapalabhati-timer"></div>
         <div class="progress-container">
             <div class="progress-bar" id="kapalabhati-progress"></div>
         </div>
         <button onclick="startKapalabhati()">Pokreni vježbu</button>
-    </div>
-
-    <!-- BHRAMARI -->
-    <div id="bhramari" class="exercise-container">
-        <h2>Bhramari (Pčelinje disanje)</h2>
-        <div class="benefits">
-            <h3>Benefiti:</h3>
-            <ul>
-                <li>Umiruje um i smanjuje stres</li>
-                <li>Pomaže kod nesanice</li>
-                <li>Smanjuje krvni tlak</li>
-                <li>Poboljšava koncentraciju</li>
-            </ul>
-        </div>
-        <div class="instructions">
-            <p>1. Udahni duboko kroz nos</p>
-            <p>2. Prstima blago zatvori ušne kanale</p>
-            <p>3. Izdah uz brujanje poput pčele</p>
-            <p>4. Osjećaj vibracije u glavi</p>
-            <p>5. Ponavljaj <span id="bhr-cycle-count">5</span> puta</p>
-        </div>
-        <div class="circle" id="bhramari-circle">SPREMAN</div>
-        <div class="timer" id="bhramari-timer"></div>
-        <div class="progress-container">
-            <div class="progress-bar" id="bhramari-progress"></div>
-        </div>
-        <button onclick="startBhramari()">Pokreni vježbu</button>
     </div>
 
     <!-- WIM HOF -->
@@ -906,34 +882,7 @@
         <button onclick="resetWimHof()" style="background-color: var(--danger-color);">Resetiraj Vježbu</button>
     </div>
 
-    <!-- TUMMO -->
-    <div id="tummo" class="exercise-container">
-        <h2>Tummo (Jogijsko disanje)</h2>
-        <div class="benefits">
-            <h3>Benefiti:</h3>
-            <ul>
-                <li>Generira unutarnju toplinu</li>
-                <li>Povećava svjesnost i koncentraciju</li>
-                <li>Duboka meditativna praksa</li>
-                <li>Poboljšava cirkulaciju</li>
-            </ul>
-        </div>
-        <div class="instructions">
-            <p>1. Udahni duboko kroz nos</p>
-            <p>2. Zadrži dah dok vizualiziraš toplinu u području pupka</p>
-            <p>3. Polako Izdah kroz nos</p>
-            <p>4. Ponavljaj <span id="tum-cycle-count">5</span> puta</p>
-            <p>5. Kombiniraj s meditacijom</p>
-        </div>
-        <div class="circle" id="tummo-circle">SPREMAN</div>
-        <div class="timer" id="tummo-timer"></div>
-        <div class="progress-container">
-            <div class="progress-bar" id="tummo-progress"></div>
-        </div>
-        <button onclick="startTummo()">Pokreni vježbu</button>
-    </div>
-
-    <!-- NOVO: CO₂ TOLERANCIJA -->
+    <!-- CO₂ TOLERANCIJA -->
     <div id="co2" class="exercise-container">
         <h2>💨 CO₂ Tolerancija (Kapno-metrijska vježba)</h2>
         <div class="benefits">
@@ -1169,9 +1118,7 @@
                 'box-cycle-count': globalCycles,
                 'alt-cycle-count': globalCycles,
                 'kap-cycle-count': globalCycles,
-                'bhr-cycle-count': globalCycles,
                 'wim-cycle-count': globalCycles,
-                'tum-cycle-count': globalCycles,
                 'co2-cycle-count': globalCycles
             };
             
@@ -1225,6 +1172,37 @@
             playBeep(100, newTheme === 'dark' ? 500 : 700);
         }
 
+        // Funkcije za ažuriranje brojača krugova
+        function updateCycleCounter(counterId, cycles, totalCycles) {
+            const counter = document.getElementById(counterId);
+            if (counter) {
+                counter.textContent = `Krug: ${cycles}/${totalCycles}`;
+                
+                if (cycles === totalCycles) {
+                    counter.style.backgroundColor = "var(--accent-color)";
+                    counter.style.borderColor = "var(--accent-color)";
+                } else if (cycles > totalCycles * 0.75) {
+                    counter.style.backgroundColor = "var(--warning-color)";
+                    counter.style.borderColor = "var(--warning-color)";
+                }
+            }
+        }
+
+        function updateKapalabhatiCounter(cycles, totalCycles) {
+            const counter = document.getElementById('kapalabhati-cycle-counter');
+            if (counter) {
+                counter.textContent = `Serija: ${cycles}/${totalCycles}`;
+                
+                if (cycles === totalCycles) {
+                    counter.style.backgroundColor = "var(--accent-color)";
+                    counter.style.borderColor = "var(--accent-color)";
+                } else if (cycles > totalCycles * 0.75) {
+                    counter.style.backgroundColor = "var(--warning-color)";
+                    counter.style.borderColor = "var(--warning-color)";
+                }
+            }
+        }
+
         // Inicijalizacija pri učitavanju
         window.onload = function() {
             // Postavi temu
@@ -1267,61 +1245,6 @@
             
             // Inicijaliziraj CO2 prikaz točkica
             updateCO2CycleDots();
-            
-            // Dodaj event listener za tipkovnicu
-            document.addEventListener('keydown', function(e) {
-                // Ctrl + Plus/Minus za broj krugova
-                if (e.ctrlKey && !e.altKey && !e.shiftKey) {
-                    if (e.key === '+' || e.key === '=') {
-                        e.preventDefault();
-                        const slider = document.getElementById('global-cycles');
-                        const newValue = Math.min(parseInt(slider.value) + 1, 30);
-                        slider.value = newValue;
-                        globalCycles = newValue;
-                        updateAllCycleCounts();
-                        showFeedback();
-                    } else if (e.key === '-' || e.key === '_') {
-                        e.preventDefault();
-                        const slider = document.getElementById('global-cycles');
-                        const newValue = Math.max(parseInt(slider.value) - 1, 1);
-                        slider.value = newValue;
-                        globalCycles = newValue;
-                        updateAllCycleCounts();
-                        showFeedback();
-                    }
-                }
-                
-                // T za toggle teme
-                if (e.key === 't' || e.key === 'T') {
-                    e.preventDefault();
-                    toggleTheme();
-                }
-                
-                // C za CO2 vježbu
-                if (e.key === 'c' || e.key === 'C') {
-                    e.preventDefault();
-                    showExercise('co2');
-                }
-                
-                // SPACE za pauziranje/nastavljanje CO2 vježbe
-                if ((e.key === ' ' || e.key === 'Space') && document.getElementById('co2').classList.contains('active')) {
-                    e.preventDefault();
-                    if (isCO2Running) {
-                        stopCO2Exercise();
-                    } else {
-                        startCO2Exercise();
-                    }
-                }
-                
-                // ESC za zaustavljanje vježbe
-                if (e.key === 'Escape') {
-                    if (document.getElementById('co2').classList.contains('active')) {
-                        stopCO2Exercise();
-                    } else {
-                        location.reload();
-                    }
-                }
-            });
         };
 
         function updateCO2CycleDots() {
@@ -1558,7 +1481,7 @@
             }, 1000);
         }
 
-        // WIM HOF FUNKCIJE (ostaje isto)
+        // WIM HOF FUNKCIJE
         let wimhofRound = 0;
         let wimhofPhase = 0;
         let breathCount = 0;
@@ -1591,22 +1514,11 @@
             document.getElementById('start-phase3').style.display = 'none';
             
             // Ažuriraj brojač krugova
-            updateWimhofCycleCounter();
+            updateCycleCounter('wimhof-cycle-counter', 0, globalCycles);
         }
 
         function updateWimhofCycleCounter() {
-            const counter = document.getElementById('wimhof-cycle-counter');
-            if (counter) {
-                counter.textContent = `Krug: ${wimhofRound}/${globalCycles}`;
-                
-                if (wimhofRound === globalCycles) {
-                    counter.style.backgroundColor = "var(--accent-color)";
-                    counter.style.borderColor = "var(--accent-color)";
-                } else if (wimhofRound > globalCycles * 0.75) {
-                    counter.style.backgroundColor = "var(--warning-color)";
-                    counter.style.borderColor = "var(--warning-color)";
-                }
-            }
+            updateCycleCounter('wimhof-cycle-counter', wimhofRound, globalCycles);
         }
 
         function startWimHofPhase1() {
@@ -1784,12 +1696,11 @@
             playBeep(300, 800);
         }
 
-        // OSTALE VJEŽBE - POBOLJŠANE FUNKCIJE
+        // DUBOKO DISANJE
         function startDeepBreathing() {
             const circle = document.getElementById('deep-circle');
             const timer = document.getElementById('deep-timer');
             const progressBar = document.getElementById('deep-progress');
-            const cycleCounter = document.getElementById('deep-cycle-counter');
             
             let cycles = 0;
             const totalCycles = globalCycles;
@@ -1799,34 +1710,21 @@
             circle.textContent = "SPREMAN";
             circle.style.backgroundColor = "var(--danger-color)";
             
-            function updateCycleCounter() {
-                cycleCounter.textContent = `Krug: ${cycles}/${totalCycles}`;
-            }
-            
-            updateCycleCounter();
+            // Inicijaliziraj brojač
+            updateCycleCounter('deep-cycle-counter', 0, totalCycles);
             
             function deepBreathCycle() {
                 if (cycles >= totalCycles) {
                     circle.textContent = "GOTOVO";
                     circle.style.backgroundColor = "var(--accent-color)";
                     timer.textContent = "";
-                    cycleCounter.textContent = "Vježba završena!";
-                    cycleCounter.style.backgroundColor = "var(--accent-color)";
-                    cycleCounter.style.borderColor = "var(--accent-color)";
+                    updateCycleCounter('deep-cycle-counter', totalCycles, totalCycles);
                     playBeep(500, 1200);
                     return;
                 }
                 
                 cycles++;
-                updateCycleCounter();
-                
-                if (cycles === totalCycles) {
-                    cycleCounter.style.backgroundColor = "var(--accent-color)";
-                    cycleCounter.style.borderColor = "var(--accent-color)";
-                } else if (cycles > totalCycles * 0.75) {
-                    cycleCounter.style.backgroundColor = "var(--warning-color)";
-                    cycleCounter.style.borderColor = "var(--warning-color)";
-                }
+                updateCycleCounter('deep-cycle-counter', cycles, totalCycles);
                 
                 circle.textContent = "UDIŠI";
                 circle.style.backgroundColor = "var(--primary-color)";
@@ -1849,11 +1747,11 @@
             deepBreathCycle();
         }
 
+        // KVADRATNO DISANJE
         function startBoxBreathing() {
             const circle = document.getElementById('box-circle');
             const timer = document.getElementById('box-timer');
             const progressBar = document.getElementById('box-progress');
-            const cycleCounter = document.getElementById('box-cycle-counter');
             
             let cycles = 0;
             const totalCycles = globalCycles;
@@ -1863,38 +1761,21 @@
             circle.textContent = "SPREMAN";
             circle.style.backgroundColor = "var(--danger-color)";
             
-            function updateCycleCounter() {
-                if (cycleCounter) {
-                    cycleCounter.textContent = `Krug: ${cycles}/${totalCycles}`;
-                }
-            }
-            
-            updateCycleCounter();
+            // Inicijaliziraj brojač
+            updateCycleCounter('box-cycle-counter', 0, totalCycles);
             
             function boxBreathCycle() {
                 if (cycles >= totalCycles) {
                     circle.textContent = "GOTOVO";
                     circle.style.backgroundColor = "var(--accent-color)";
                     timer.textContent = "";
-                    if (cycleCounter) {
-                        cycleCounter.textContent = "Vježba završena!";
-                        cycleCounter.style.backgroundColor = "var(--accent-color)";
-                        cycleCounter.style.borderColor = "var(--accent-color)";
-                    }
+                    updateCycleCounter('box-cycle-counter', totalCycles, totalCycles);
                     playBeep(500, 1200);
                     return;
                 }
                 
                 cycles++;
-                updateCycleCounter();
-                
-                if (cycles === totalCycles && cycleCounter) {
-                    cycleCounter.style.backgroundColor = "var(--accent-color)";
-                    cycleCounter.style.borderColor = "var(--accent-color)";
-                } else if (cycles > totalCycles * 0.75 && cycleCounter) {
-                    cycleCounter.style.backgroundColor = "var(--warning-color)";
-                    cycleCounter.style.borderColor = "var(--warning-color)";
-                }
+                updateCycleCounter('box-cycle-counter', cycles, totalCycles);
                 
                 circle.textContent = "UDIŠI";
                 circle.style.backgroundColor = "var(--primary-color)";
@@ -1922,11 +1803,11 @@
             boxBreathCycle();
         }
 
+        // ALTERNATIVNO DISANJE
         function startAlternateBreathing() {
             const circle = document.getElementById('alternate-circle');
             const timer = document.getElementById('alternate-timer');
             const progressBar = document.getElementById('alternate-progress');
-            const cycleCounter = document.getElementById('alternate-cycle-counter');
             
             let cycles = 0;
             const totalCycles = globalCycles;
@@ -1936,38 +1817,21 @@
             circle.textContent = "SPREMAN";
             circle.style.backgroundColor = "var(--danger-color)";
             
-            function updateCycleCounter() {
-                if (cycleCounter) {
-                    cycleCounter.textContent = `Krug: ${cycles}/${totalCycles}`;
-                }
-            }
-            
-            updateCycleCounter();
+            // Inicijaliziraj brojač
+            updateCycleCounter('alternate-cycle-counter', 0, totalCycles);
             
             function alternateBreathCycle() {
                 if (cycles >= totalCycles) {
                     circle.textContent = "GOTOVO";
                     circle.style.backgroundColor = "var(--accent-color)";
                     timer.textContent = "";
-                    if (cycleCounter) {
-                        cycleCounter.textContent = "Vježba završena!";
-                        cycleCounter.style.backgroundColor = "var(--accent-color)";
-                        cycleCounter.style.borderColor = "var(--accent-color)";
-                    }
+                    updateCycleCounter('alternate-cycle-counter', totalCycles, totalCycles);
                     playBeep(500, 1200);
                     return;
                 }
                 
                 cycles++;
-                updateCycleCounter();
-                
-                if (cycles === totalCycles && cycleCounter) {
-                    cycleCounter.style.backgroundColor = "var(--accent-color)";
-                    cycleCounter.style.borderColor = "var(--accent-color)";
-                } else if (cycles > totalCycles * 0.75 && cycleCounter) {
-                    cycleCounter.style.backgroundColor = "var(--warning-color)";
-                    cycleCounter.style.borderColor = "var(--warning-color)";
-                }
+                updateCycleCounter('alternate-cycle-counter', cycles, totalCycles);
                 
                 circle.textContent = "UDIŠI LIJEVOM";
                 circle.style.backgroundColor = "var(--primary-color)";
@@ -1990,11 +1854,11 @@
             alternateBreathCycle();
         }
 
+        // KAPALABHATI
         function startKapalabhati() {
             const circle = document.getElementById('kapalabhati-circle');
             const timer = document.getElementById('kapalabhati-timer');
             const progressBar = document.getElementById('kapalabhati-progress');
-            const cycleCounter = document.getElementById('kapalabhati-cycle-counter');
             
             let rounds = 0;
             const totalRounds = globalCycles;
@@ -2004,38 +1868,21 @@
             circle.textContent = "SPREMAN";
             circle.style.backgroundColor = "var(--danger-color)";
             
-            function updateCycleCounter() {
-                if (cycleCounter) {
-                    cycleCounter.textContent = `Serija: ${rounds}/${totalRounds}`;
-                }
-            }
-            
-            updateCycleCounter();
+            // Inicijaliziraj brojač
+            updateKapalabhatiCounter(0, totalRounds);
             
             function round() {
                 if (rounds >= totalRounds) {
                     circle.textContent = "GOTOVO";
                     circle.style.backgroundColor = "var(--accent-color)";
                     timer.textContent = "";
-                    if (cycleCounter) {
-                        cycleCounter.textContent = "Vježba završena!";
-                        cycleCounter.style.backgroundColor = "var(--accent-color)";
-                        cycleCounter.style.borderColor = "var(--accent-color)";
-                    }
+                    updateKapalabhatiCounter(totalRounds, totalRounds);
                     playBeep(500, 1200);
                     return;
                 }
                 
                 rounds++;
-                updateCycleCounter();
-                
-                if (rounds === totalRounds && cycleCounter) {
-                    cycleCounter.style.backgroundColor = "var(--accent-color)";
-                    cycleCounter.style.borderColor = "var(--accent-color)";
-                } else if (rounds > totalRounds * 0.75 && cycleCounter) {
-                    cycleCounter.style.backgroundColor = "var(--warning-color)";
-                    cycleCounter.style.borderColor = "var(--warning-color)";
-                }
+                updateKapalabhatiCounter(rounds, totalRounds);
                 
                 circle.textContent = "BRZO UDIŠI I IZDIŠI";
                 circle.style.backgroundColor = "var(--danger-color)";
@@ -2051,137 +1898,6 @@
             }
             
             round();
-        }
-
-        function startBhramari() {
-            const circle = document.getElementById('bhramari-circle');
-            const timer = document.getElementById('bhramari-timer');
-            const progressBar = document.getElementById('bhramari-progress');
-            const cycleCounter = document.getElementById('bhramari-cycle-counter');
-            
-            let cycles = 0;
-            const totalCycles = globalCycles;
-            
-            cycles = 0;
-            progressBar.style.width = "0%";
-            circle.textContent = "SPREMAN";
-            circle.style.backgroundColor = "var(--danger-color)";
-            
-            function updateCycleCounter() {
-                if (cycleCounter) {
-                    cycleCounter.textContent = `Krug: ${cycles}/${totalCycles}`;
-                }
-            }
-            
-            updateCycleCounter();
-            
-            function bhramariCycle() {
-                if (cycles >= totalCycles) {
-                    circle.textContent = "GOTOVO";
-                    circle.style.backgroundColor = "var(--accent-color)";
-                    timer.textContent = "";
-                    if (cycleCounter) {
-                        cycleCounter.textContent = "Vježba završena!";
-                        cycleCounter.style.backgroundColor = "var(--accent-color)";
-                        cycleCounter.style.borderColor = "var(--accent-color)";
-                    }
-                    playBeep(500, 1200);
-                    return;
-                }
-                
-                cycles++;
-                updateCycleCounter();
-                
-                if (cycles === totalCycles && cycleCounter) {
-                    cycleCounter.style.backgroundColor = "var(--accent-color)";
-                    cycleCounter.style.borderColor = "var(--accent-color)";
-                } else if (cycles > totalCycles * 0.75 && cycleCounter) {
-                    cycleCounter.style.backgroundColor = "var(--warning-color)";
-                    cycleCounter.style.borderColor = "var(--warning-color)";
-                }
-                
-                circle.textContent = "UDIŠI";
-                circle.style.backgroundColor = "var(--primary-color)";
-                animateProgress(4, "bhramari-timer", () => {
-                    playBeep(300, 800);
-                    circle.textContent = "BRUJ...";
-                    circle.style.backgroundColor = "#9b59b6";
-                    animateProgress(8, "bhramari-timer", () => {
-                        playBeep(300, 800);
-                        setTimeout(bhramariCycle, 300);
-                    });
-                });
-            }
-            
-            bhramariCycle();
-        }
-
-        function startTummo() {
-            const circle = document.getElementById('tummo-circle');
-            const timer = document.getElementById('tummo-timer');
-            const progressBar = document.getElementById('tummo-progress');
-            const cycleCounter = document.getElementById('tummo-cycle-counter');
-            
-            let cycles = 0;
-            const totalCycles = globalCycles;
-            
-            cycles = 0;
-            progressBar.style.width = "0%";
-            circle.textContent = "SPREMAN";
-            circle.style.backgroundColor = "var(--danger-color)";
-            
-            function updateCycleCounter() {
-                if (cycleCounter) {
-                    cycleCounter.textContent = `Krug: ${cycles}/${totalCycles}`;
-                }
-            }
-            
-            updateCycleCounter();
-            
-            function tummoCycle() {
-                if (cycles >= totalCycles) {
-                    circle.textContent = "GOTOVO";
-                    circle.style.backgroundColor = "var(--accent-color)";
-                    timer.textContent = "";
-                    if (cycleCounter) {
-                        cycleCounter.textContent = "Vježba završena!";
-                        cycleCounter.style.backgroundColor = "var(--accent-color)";
-                        cycleCounter.style.borderColor = "var(--accent-color)";
-                    }
-                    playBeep(500, 1200);
-                    return;
-                }
-                
-                cycles++;
-                updateCycleCounter();
-                
-                if (cycles === totalCycles && cycleCounter) {
-                    cycleCounter.style.backgroundColor = "var(--accent-color)";
-                    cycleCounter.style.borderColor = "var(--accent-color)";
-                } else if (cycles > totalCycles * 0.75 && cycleCounter) {
-                    cycleCounter.style.backgroundColor = "var(--warning-color)";
-                    cycleCounter.style.borderColor = "var(--warning-color)";
-                }
-                
-                circle.textContent = "UDIŠI + VIZUALIZIRAJ";
-                circle.style.backgroundColor = "var(--primary-color)";
-                animateProgress(6, "tummo-timer", () => {
-                    playBeep(300, 800);
-                    circle.textContent = "ZADRŽI + KONCENTRIRAJ";
-                    circle.style.backgroundColor = "#9b59b6";
-                    animateProgress(10, "tummo-timer", () => {
-                        playBeep(300, 800);
-                        circle.textContent = "IZDIŠI + OPUSTI";
-                        circle.style.backgroundColor = "var(--danger-color)";
-                        animateProgress(8, "tummo-timer", () => {
-                            playBeep(300, 800);
-                            setTimeout(tummoCycle, 300);
-                        });
-                    });
-                });
-            }
-            
-            tummoCycle();
         }
 
         // POBOLJŠANA POMOĆNA FUNKCIJA ZA ANIMACIJU (bez nulte sekunde)
