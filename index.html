@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vježbe disanja</title>
+    <title>Breathing Exercises</title>
     <style>
         :root {
             --bg-color: #f5f5f5;
@@ -51,7 +51,7 @@
             margin-bottom: 20px;
         }
         
-        /* HEADER SA DARK MODE TOGGLE */
+        /* HEADER SA DARK MODE I LANGUAGE TOGGLE */
         .app-header {
             display: flex;
             justify-content: space-between;
@@ -61,58 +61,54 @@
             border-bottom: 2px solid var(--primary-color);
         }
         
-        .theme-toggle {
+        .header-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .theme-toggle,
+        .language-cycle-btn {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             cursor: pointer;
-            padding: 8px 15px;
+            padding: 8px 16px;
             background-color: var(--card-bg);
             border-radius: 25px;
             box-shadow: var(--shadow);
             transition: var(--transition);
+            border: 2px solid var(--primary-color);
+            font-weight: 600;
+            user-select: none;
         }
-        
-        .theme-toggle:hover {
+
+        .theme-toggle:hover,
+        .language-cycle-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        }
-        
-        .theme-toggle .toggle-slider {
-            width: 50px;
-            height: 24px;
-            background-color: #ccc;
-            border-radius: 12px;
-            position: relative;
-            transition: var(--transition);
-        }
-        
-        .theme-toggle .toggle-slider::before {
-            content: '';
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background-color: white;
-            top: 2px;
-            left: 2px;
-            transition: var(--transition);
-        }
-        
-        [data-theme="dark"] .theme-toggle .toggle-slider {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             background-color: var(--primary-color);
+            color: white;
         }
-        
-        [data-theme="dark"] .theme-toggle .toggle-slider::before {
-            transform: translateX(26px);
+
+        .theme-toggle:active,
+        .language-cycle-btn:active {
+            transform: translateY(0);
         }
-        
-        .theme-toggle .icon {
-            font-size: 18px;
+
+        #current-lang-flag {
+            font-size: 20px;
         }
-        
-        .theme-toggle .sun-icon { color: #f39c12; }
-        .theme-toggle .moon-icon { color: #3498db; }
+
+        #current-lang-name {
+            font-size: 14px;
+            font-weight: bold;
+            color: var(--secondary-color);
+        }
+
+        .language-cycle-btn:hover #current-lang-name {
+            color: white;
+        }
         
         .menu {
             display: grid;
@@ -136,13 +132,13 @@
         
         /* CO2 SPECIFIČNI GUMB */
         .co2-btn {
-            background-color: var(--co2-color) !important;
+            background-color: var(--co2-color);
             position: relative;
             overflow: hidden;
         }
         
         .co2-btn:hover {
-            background-color: #8e44ad !important;
+            background-color: #8e44ad;
         }
         
         .co2-btn::after {
@@ -457,11 +453,11 @@
         }
         
         .co2-circle {
-            background-color: var(--co2-color) !important;
+            background-color: var(--co2-color);
         }
         
         .co2-progress-bar {
-            background-color: var(--co2-color) !important;
+            background-color: var(--co2-color);
         }
         
         /* WIM HOF KONTROLE */
@@ -603,11 +599,11 @@
         
         /* CO2 START GUMB */
         .co2-start-btn {
-            background-color: var(--co2-color) !important;
+            background-color: var(--co2-color);
         }
         
         .co2-start-btn:hover {
-            background-color: #8e44ad !important;
+            background-color: #8e44ad;
         }
         
         /* ANIMACIJE */
@@ -692,48 +688,64 @@
             h1 {
                 font-size: 24px;
             }
+            
+            .header-controls {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .theme-toggle, .language-cycle-btn {
+                width: 100%;
+                justify-content: center;
+            }
         }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body data-theme="light">
+<body data-theme="light" data-lang="hr">
     <div class="app-header">
-        <h1>🌬️ Vježbe disanja</h1>
-        <div class="theme-toggle" onclick="toggleTheme()">
-            <span class="icon sun-icon">☀️</span>
-            <div class="toggle-slider"></div>
-            <span class="icon moon-icon">🌙</span>
+        <h1 id="app-title">🌬️ Vježbe disanja</h1>
+        <div class="header-controls">
+            <div class="language-cycle-btn" onclick="cycleLanguage()" role="button" aria-label="Promijeni jezik" tabindex="0">
+                <span id="current-lang-flag" aria-hidden="true">🇭🇷</span>
+                <span id="current-lang-name">HR</span>
+            </div>
+            <div class="theme-toggle" onclick="toggleTheme()" role="button" aria-label="Promijeni temu" tabindex="0">
+                <span class="icon sun-icon" aria-hidden="true">☀️</span>
+                <div class="toggle-slider" aria-hidden="true"></div>
+                <span class="icon moon-icon" aria-hidden="true">🌙</span>
+            </div>
         </div>
     </div>
     
     <!-- Globalno podešavanje broja krugova -->
     <div class="global-settings">
-        <h3>Broj krugova za sve vježbe:</h3>
+        <h3 id="cycles-label">Broj krugova za sve vježbe:</h3>
         <div class="cycles-slider-container">
-            <span class="cycles-label">Broj krugova:</span>
-            <input type="range" id="global-cycles" min="1" max="50" value="5">
+            <span class="cycles-label" id="cycles-text">Broj krugova:</span>
+            <input type="range" id="global-cycles" min="1" max="50" value="5" aria-label="Broj krugova">
             <span class="cycles-value" id="cycles-value">5</span>
         </div>
-        <div class="cycles-info">
+        <div class="cycles-info" id="cycles-info">
             <p>Ova postavka vrijedi za sve vježbe. 1-15 krugova = početnik, 15-30 = srednji nivo, 30-50 = napredni.</p>
         </div>
     </div>
     
     <div class="menu">
-        <button onclick="showExercise('deep')">Duboko disanje (4-7-8)</button>
-        <button onclick="showExercise('box')">Kvadratno disanje</button>
-        <button onclick="showExercise('alternate')">Alternativno disanje</button>
-        <button onclick="showExercise('kapalabhati')">Kapalabhati</button>
-        <button onclick="showExercise('wimhof')">Wim Hof</button>
-        <button onclick="showExercise('co2')" class="co2-btn">CO2 Tolerancija</button>
+        <button onclick="showExercise('deep')" id="btn-deep">Duboko disanje (4-7-8)</button>
+        <button onclick="showExercise('box')" id="btn-box">Kvadratno disanje</button>
+        <button onclick="showExercise('alternate')" id="btn-alternate">Alternativno disanje</button>
+        <button onclick="showExercise('kapalabhati')" id="btn-kapalabhati">Kapalabhati</button>
+        <button onclick="showExercise('wimhof')" id="btn-wimhof">Wim Hof</button>
+        <button onclick="showExercise('co2')" class="co2-btn" id="btn-co2">CO2 Tolerancija</button>
     </div>
     
     <!-- DUBOKO DISANJE -->
     <div id="deep" class="exercise-container">
-        <h2>Duboko disanje (4-7-8)</h2>
+        <h2 id="deep-title">Duboko disanje (4-7-8)</h2>
         <div class="benefits">
-            <h3>Benefiti:</h3>
-            <ul>
+            <h3 id="benefits-deep">Benefiti:</h3>
+            <ul id="deep-benefits-list">
                 <li>Smanjuje stres i anksioznost</li>
                 <li>Pomaže kod nesanice</li>
                 <li>Umiruje nervni sustav</li>
@@ -741,10 +753,10 @@
             </ul>
         </div>
         <div class="instructions">
-            <p>1. Udahni duboko kroz nos (4 sekunde)</p>
-            <p>2. Zadrži dah (7 sekundi)</p>
-            <p>3. Izdah kroz usta (8 sekundi)</p>
-            <p>Ponavljaj <span id="deep-cycle-count">5</span> puta.</p>
+            <p id="deep-step1">1. Udahni duboko kroz nos (4 sekunde)</p>
+            <p id="deep-step2">2. Zadrži dah (7 sekundi)</p>
+            <p id="deep-step3">3. Izdah kroz usta (8 sekundi)</p>
+            <p id="deep-repeat">Ponavljaj <span id="deep-cycle-count">5</span> puta.</p>
         </div>
         
         <div class="cycle-counter" id="deep-cycle-counter">Krug: 0/5</div>
@@ -753,15 +765,15 @@
         <div class="progress-container">
             <div class="progress-bar" id="deep-progress"></div>
         </div>
-        <button onclick="startDeepBreathing()">Pokreni vježbu</button>
+        <button onclick="startDeepBreathing()" id="btn-start-deep">Pokreni vježbu</button>
     </div>
     
     <!-- KVADRATNO DISANJE -->
     <div id="box" class="exercise-container">
-        <h2>Kvadratno disanje</h2>
+        <h2 id="box-title">Kvadratno disanje</h2>
         <div class="benefits">
-            <h3>Benefiti:</h3>
-            <ul>
+            <h3 id="benefits-box">Benefiti:</h3>
+            <ul id="box-benefits-list">
                 <li>Balansira autonomni nervni sustav</li>
                 <li>Smanjuje stres u trenutku</li>
                 <li>Poboljšava fokus</li>
@@ -769,11 +781,11 @@
             </ul>
         </div>
         <div class="instructions">
-            <p>1. Udahni (4 sekunde)</p>
-            <p>2. Zadrži dah (4 sekunde)</p>
-            <p>3. Izdah (4 sekunde)</p>
-            <p>4. Zadrži prazna pluća (4 sekunde)</p>
-            <p>Ponavljaj <span id="box-cycle-count">5</span> puta.</p>
+            <p id="box-step1">1. Udahni (4 sekunde)</p>
+            <p id="box-step2">2. Zadrži dah (4 sekunde)</p>
+            <p id="box-step3">3. Izdah (4 sekunde)</p>
+            <p id="box-step4">4. Zadrži prazna pluća (4 sekunde)</p>
+            <p id="box-repeat">Ponavljaj <span id="box-cycle-count">5</span> puta.</p>
         </div>
         
         <div class="cycle-counter" id="box-cycle-counter">Krug: 0/5</div>
@@ -782,15 +794,15 @@
         <div class="progress-container">
             <div class="progress-bar" id="box-progress"></div>
         </div>
-        <button onclick="startBoxBreathing()">Pokreni vježbu</button>
+        <button onclick="startBoxBreathing()" id="btn-start-box">Pokreni vježbu</button>
     </div>
     
     <!-- ALTERNATIVNO DISANJE -->
     <div id="alternate" class="exercise-container">
-        <h2>Alternativno disanje (Nadi Shodhana)</h2>
+        <h2 id="alternate-title">Alternativno disanje (Nadi Shodhana)</h2>
         <div class="benefits">
-            <h3>Benefiti:</h3>
-            <ul>
+            <h3 id="benefits-alternate">Benefiti:</h3>
+            <ul id="alternate-benefits-list">
                 <li>Uravnotežuje lijevu i desnu mozgovnu hemisferu</li>
                 <li>Poboljšava kognitivne funkcije</li>
                 <li>Smanjuje mentalni nemir</li>
@@ -798,12 +810,12 @@
             </ul>
         </div>
         <div class="instructions">
-            <p>1. Prstom zatvori desnu nosnicu</p>
-            <p>2. Udahni lijevom nosnicom (4 sekunde)</p>
-            <p>3. Zadrži dah (4 sekunde)</p>
-            <p>4. Otvori desnu, zatvori lijevu nosnicu</p>
-            <p>5. Izdah desnom nosnicom (6 sekundi)</p>
-            <p>Ponavljaj <span id="alt-cycle-count">5</span> puta.</p>
+            <p id="alt-step1">1. Prstom zatvori desnu nosnicu</p>
+            <p id="alt-step2">2. Udahni lijevom nosnicom (4 sekunde)</p>
+            <p id="alt-step3">3. Zadrži dah (4 sekunde)</p>
+            <p id="alt-step4">4. Otvori desnu, zatvori lijevu nosnicu</p>
+            <p id="alt-step5">5. Izdah desnom nosnicom (6 sekundi)</p>
+            <p id="alt-repeat">Ponavljaj <span id="alt-cycle-count">5</span> puta.</p>
         </div>
         
         <div class="cycle-counter" id="alternate-cycle-counter">Krug: 0/5</div>
@@ -812,15 +824,15 @@
         <div class="progress-container">
             <div class="progress-bar" id="alternate-progress"></div>
         </div>
-        <button onclick="startAlternateBreathing()">Pokreni vježbu</button>
+        <button onclick="startAlternateBreathing()" id="btn-start-alternate">Pokreni vježbu</button>
     </div>
 
     <!-- KAPALABHATI -->
     <div id="kapalabhati" class="exercise-container">
-        <h2>Kapalabhati (Osvježavajuće disanje)</h2>
+        <h2 id="kapalabhati-title">Kapalabhati (Osvježavajuće disanje)</h2>
         <div class="benefits">
-            <h3>Benefiti:</h3>
-            <ul>
+            <h3 id="benefits-kapalabhati">Benefiti:</h3>
+            <ul id="kapalabhati-benefits-list">
                 <li>Pročišćava pluća i dišne puteve</li>
                 <li>Povećava energiju i budnost</li>
                 <li>Poboljšava probavu</li>
@@ -828,28 +840,28 @@
             </ul>
         </div>
         <div class="instructions">
-            <p>1. Udahni normalno kroz nos</p>
-            <p>2. Snažno izdiši kontrakcijom trbušnih mišića</p>
-            <p>3. Ponavljaj 30 brzih izdaha u 15 sekundi</p>
-            <p>4. Nakon serije, duboko udahni i zadrži 15-30 sekundi</p>
-            <p>5. Ponovi <span id="kap-cycle-count">5</span> serije</p>
+            <p id="kap-step1">1. Udahni normalno kroz nos</p>
+            <p id="kap-step2">2. Snažno izdiši kontrakcijom trbušnih mišića</p>
+            <p id="kap-step3">3. Ponavljaj 30 brzih izdaha u 15 sekundi</p>
+            <p id="kap-step4">4. Nakon serije, duboko udahni i zadrži 15-30 sekundi</p>
+            <p id="kap-repeat">5. Ponovi <span id="kap-cycle-count">5</span> serije</p>
         </div>
         
-        <div class="cycle-counter" id="kapalabhati-cycle-counter">Serija: 0/5</div>
+        <div class="cycle-counter" id="kapalabhati-cycle-counter">Krug: 0/5</div>
         <div class="circle" id="kapalabhati-circle">SPREMAN</div>
         <div class="timer" id="kapalabhati-timer"></div>
         <div class="progress-container">
             <div class="progress-bar" id="kapalabhati-progress"></div>
         </div>
-        <button onclick="startKapalabhati()">Pokreni vježbu</button>
+        <button onclick="startKapalabhati()" id="btn-start-kapalabhati">Pokreni vježbu</button>
     </div>
 
     <!-- WIM HOF -->
     <div id="wimhof" class="exercise-container">
-        <h2>Wim Hof metoda</h2>
+        <h2 id="wimhof-title">Wim Hof metoda</h2>
         <div class="benefits">
-            <h3>Benefiti:</h3>
-            <ul>
+            <h3 id="benefits-wimhof">Benefiti:</h3>
+            <ul id="wimhof-benefits-list">
                 <li>Povećava energiju i imunitet</li>
                 <li>Poboljšava kontrolu nad stresom</li>
                 <li>Povećava toleranciju na hladnoću</li>
@@ -857,16 +869,16 @@
             </ul>
         </div>
         <div class="instructions">
-            <p><strong>Faza 1:</strong> 20-30 brzih udisaja i Izdaha u 60 sekundi</p>
-            <p><strong>Faza 2:</strong> Izdah i zadržavanje daha bez zraka (koliko god možeš), zatim pokreni iduću fazu</p>
-            <p><strong>Faza 3:</strong> Duboki udisaj i zadržavanje daha 15 sekundi</p>
-            <p>Ponovi ciklus <span id="wim-cycle-count">5</span> puta</p>
+            <p id="wim-step1"><strong>Faza 1:</strong> 20-30 brzih udisaja i Izdaha u 60 sekundi</p>
+            <p id="wim-step2"><strong>Faza 2:</strong> Izdah i zadržavanje daha bez zraka (koliko god možeš), zatim pokreni iduću fazu</p>
+            <p id="wim-step3"><strong>Faza 3:</strong> Duboki udisaj i zadržavanje daha 15 sekundi</p>
+            <p id="wim-repeat">Ponovi ciklus <span id="wim-cycle-count">5</span> puta</p>
         </div>
         
         <div class="cycle-counter" id="wimhof-cycle-counter">Krug: 0/5</div>
         <div class="wimhof-phase" id="wimhof-phase">Priprema...</div>
         <div class="circle" id="wimhof-circle">SPREMAN</div>
-        <div class="breath-counter" id="breath-counter" style="display: none;">Udisaji: <span id="breath-count">0</span>/30</div>
+        <div class="breath-counter" id="breath-counter" style="display: none;"><span id="breaths-text">Udisaji:</span> <span id="breath-count">0</span>/30</div>
         <div class="timer" id="wimhof-timer" style="display: none;"></div>
         <div class="hold-timer" id="hold-timer" style="display: none;">00:00</div>
         <div class="progress-container">
@@ -879,15 +891,15 @@
             <button onclick="startWimHofPhase3()" id="start-phase3" style="display: none;">Udahni i Zadrži (Faza 3)</button>
         </div>
         
-        <button onclick="resetWimHof()" style="background-color: var(--danger-color);">Resetiraj Vježbu</button>
+        <button onclick="resetWimHof()" style="background-color: var(--danger-color);" id="btn-reset-wimhof">Resetiraj Vježbu</button>
     </div>
 
     <!-- CO₂ TOLERANCIJA -->
     <div id="co2" class="exercise-container">
-        <h2>💨 CO₂ Tolerancija (Kapno-metrijska vježba)</h2>
+        <h2 id="co2-title">💨 CO₂ Tolerancija (Kapno-metrijska vježba)</h2>
         <div class="benefits">
-            <h3>Benefiti:</h3>
-            <ul>
+            <h3 id="benefits-co2">Benefiti:</h3>
+            <ul id="co2-benefits-list">
                 <li>Povećava toleranciju na CO₂ u krvi</li>
                 <li>Smanjuje osjećaj zadihe i panike</li>
                 <li>Poboljšava sportsku izdržljivost</li>
@@ -897,62 +909,62 @@
         </div>
         
         <div class="instructions">
-            <p><strong>Upute:</strong> Postavite trajanje svake faze prema vašoj trenutnoj toleranciji.</p>
-            <p>Počnite s kraćim vrijednostima i postupno povećavajte kako vam tolerancija raste.</p>
+            <p id="co2-instructions"><strong>Upute:</strong> Postavite trajanje svake faze prema vašoj trenutnoj toleranciji.</p>
+            <p id="co2-tips">Počnite s kraćim vrijednostima i postupno povećavajte kako vam tolerancija raste.</p>
         </div>
         
-        <!-- Kontrole za podešavanje faza -->
+        <!-- Kontrole za podešavanje faze -->
         <div class="co2-controls">
             <!-- UDIŠAJ -->
             <div class="phase-control inhale">
-                <h3><i class="fas fa-wind" style="color: var(--accent-color);"></i> 1. Udah</h3>
+                <h3><i class="fas fa-wind" style="color: var(--accent-color);" aria-hidden="true"></i> <span id="inhale-label">1. Udah</span></h3>
                 <!-- Gumbići + i - -->
                 <div class="phase-adjust-buttons">
-                    <button class="adjust-btn inhale-btn minus-btn" onclick="adjustInhaleTime(-1)"></button>
-                    <button class="adjust-btn inhale-btn plus-btn" onclick="adjustInhaleTime(1)"></button>
+                    <button class="adjust-btn inhale-btn minus-btn" onclick="adjustInhaleTime(-1)" aria-label="Smanji vrijeme udaha"></button>
+                    <button class="adjust-btn inhale-btn plus-btn" onclick="adjustInhaleTime(1)" aria-label="Povećaj vrijeme udaha"></button>
                 </div>
                 <div class="phase-slider-container">
-                    <span class="phase-label">Trajanje (sekunde):</span>
-                    <input type="range" class="phase-slider inhale-slider" id="inhale-slider" min="2" max="20" value="4">
+                    <span class="phase-label" id="inhale-duration">Trajanje (sekunde):</span>
+                    <input type="range" class="phase-slider inhale-slider" id="inhale-slider" min="2" max="20" value="4" aria-label="Vrijeme udaha">
                     <span class="phase-value inhale-value" id="inhale-value">4s</span>
                 </div>
-                <div style="font-size: 14px; color: var(--text-color); opacity: 0.8; margin-top: 8px;">
+                <div style="font-size: 14px; color: var(--text-color); opacity: 0.8; margin-top: 8px;" id="inhale-desc">
                     Normalan udah kroz nos.
                 </div>
             </div>
             
             <!-- IZDIŠAJ -->
             <div class="phase-control exhale">
-                <h3><i class="fas fa-wind" style="color: var(--danger-color);"></i> 2. Izdah</h3>
+                <h3><i class="fas fa-wind" style="color: var(--danger-color);" aria-hidden="true"></i> <span id="exhale-label">2. Izdah</span></h3>
                 <!-- Gumbići + i - -->
                 <div class="phase-adjust-buttons">
-                    <button class="adjust-btn exhale-btn minus-btn" onclick="adjustExhaleTime(-1)"></button>
-                    <button class="adjust-btn exhale-btn plus-btn" onclick="adjustExhaleTime(1)"></button>
+                    <button class="adjust-btn exhale-btn minus-btn" onclick="adjustExhaleTime(-1)" aria-label="Smanji vrijeme izdaha"></button>
+                    <button class="adjust-btn exhale-btn plus-btn" onclick="adjustExhaleTime(1)" aria-label="Povećaj vrijeme izdaha"></button>
                 </div>
                 <div class="phase-slider-container">
-                    <span class="phase-label">Trajanje (sekunde):</span>
-                    <input type="range" class="phase-slider exhale-slider" id="exhale-slider" min="2" max="30" value="6">
+                    <span class="phase-label" id="exhale-duration">Trajanje (sekunde):</span>
+                    <input type="range" class="phase-slider exhale-slider" id="exhale-slider" min="2" max="30" value="6" aria-label="Vrijeme izdaha">
                     <span class="phase-value exhale-value" id="exhale-value">6s</span>
                 </div>
-                <div style="font-size: 14px; color: var(--text-color); opacity: 0.8; margin-top: 8px;">
+                <div style="font-size: 14px; color: var(--text-color); opacity: 0.8; margin-top: 8px;" id="exhale-desc">
                     Potpuni, kontrolirani izdah.
                 </div>
             </div>
             
             <!-- ZADRŽAVANJE -->
             <div class="phase-control hold">
-                <h3><i class="fas fa-stopwatch" style="color: var(--warning-color);"></i> 3. Zadržavanje</h3>
+                <h3><i class="fas fa-stopwatch" style="color: var(--warning-color);" aria-hidden="true"></i> <span id="hold-label">3. Zadržavanje</span></h3>
                 <!-- Gumbići + i - -->
                 <div class="phase-adjust-buttons">
-                    <button class="adjust-btn hold-btn minus-btn" onclick="adjustHoldTime(-1)"></button>
-                    <button class="adjust-btn hold-btn plus-btn" onclick="adjustHoldTime(1)"></button>
+                    <button class="adjust-btn hold-btn minus-btn" onclick="adjustHoldTime(-1)" aria-label="Smanji vrijeme zadržavanja"></button>
+                    <button class="adjust-btn hold-btn plus-btn" onclick="adjustHoldTime(1)" aria-label="Povećaj vrijeme zadržavanja"></button>
                 </div>
                 <div class="phase-slider-container">
-                    <span class="phase-label">Trajanje (sekunde):</span>
-                    <input type="range" class="phase-slider hold-slider" id="hold-slider" min="3" max="60" value="5">
+                    <span class="phase-label" id="hold-duration">Trajanje (sekunde):</span>
+                    <input type="range" class="phase-slider hold-slider" id="hold-slider" min="3" max="60" value="5" aria-label="Vrijeme zadržavanja">
                     <span class="phase-value hold-value" id="hold-value">5s</span>
                 </div>
-                <div style="font-size: 14px; color: var(--text-color); opacity: 0.8; margin-top: 8px;">
+                <div style="font-size: 14px; color: var(--text-color); opacity: 0.8; margin-top: 8px;" id="hold-desc">
                     Zadržavanje daha bez udisanja.
                 </div>
             </div>
@@ -962,19 +974,19 @@
         <div class="co2-settings-summary">
             <div class="setting-item">
                 <div class="setting-value inhale-value" id="summary-inhale">4s</div>
-                <div class="setting-label">Dijafragmalni udah</div>
+                <div class="setting-label" id="summary-inhale-label">Dijafragmalni udah</div>
             </div>
             <div class="setting-item">
                 <div class="setting-value exhale-value" id="summary-exhale">6s</div>
-                <div class="setting-label">Izdah</div>
+                <div class="setting-label" id="summary-exhale-label">Izdah</div>
             </div>
             <div class="setting-item">
                 <div class="setting-value hold-value" id="summary-hold">5s</div>
-                <div class="setting-label">Zadržavanje</div>
+                <div class="setting-label" id="summary-hold-label">Zadržavanje</div>
             </div>
             <div class="setting-item">
                 <div class="setting-value" id="co2-cycle-count" style="color: var(--co2-color);">5</div>
-                <div class="setting-label">Broj krugova</div>
+                <div class="setting-label" id="summary-cycles-label">Broj krugova</div>
             </div>
         </div>
         
@@ -1006,45 +1018,16 @@
         
         <!-- Gumb za pokretanje -->
         <button onclick="startCO2Exercise()" class="co2-start-btn">
-            <i class="fas fa-play-circle"></i> Pokreni CO2 vježbu
+            <i class="fas fa-play-circle" aria-hidden="true"></i> <span id="btn-start-co2">Pokreni CO2 vježbu</span>
         </button>
     </div>
 
     <script>
-        // Audio kontekst za generiranje zvučnih signala
-        let audioCtx;
-        try {
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        } catch (e) {
-            console.log("Web Audio API nije podržan u ovom pregledniku");
-        }
-
-        // Funkcija za reprodukciju beep zvuka
-        function playBeep(duration = 200, frequency = 800, type = "sine") {
-            if (!audioCtx) return;
-            
-            try {
-                const oscillator = audioCtx.createOscillator();
-                const gainNode = audioCtx.createGain();
-                
-                oscillator.type = type;
-                oscillator.frequency.value = frequency;
-                oscillator.connect(gainNode);
-                gainNode.connect(audioCtx.destination);
-                
-                gainNode.gain.setValueAtTime(0.5, audioCtx.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration/1000);
-                
-                oscillator.start();
-                oscillator.stop(audioCtx.currentTime + duration/1000);
-            } catch (e) {
-                console.log("Greška pri reprodukciju zvuka:", e);
-            }
-        }
-
-        // Globalna varijabla za broj krugova
+        // ========== GLOBALNE VARIJABLE ==========
+        let audioCtx = null;
+        let audioInitialized = false;
         let globalCycles = 5;
-
+        
         // CO2 varijable
         let co2InhaleTime = 4;
         let co2ExhaleTime = 6;
@@ -1052,66 +1035,1004 @@
         let co2Round = 0;
         let co2Interval = null;
         let isCO2Running = false;
+        
+        // Wim Hof varijable
+        let wimhofRound = 0;
+        let wimhofPhase = 0;
+        let breathCount = 0;
+        let phase1Timer = null;
+        let phase2StartTime = null;
+        let phase2Timer = null;
+        let phase3Timer = null;
+        
+        // Intervali za ostale vježbe
+        let activeIntervals = [];
+        
+        // ========== JEZIČNE POSTAVKE ==========
+        const translations = {
+            hr: {
+                appTitle: "🌬️ Vježbe disanja",
+                cyclesLabel: "Broj krugova za sve vježbe:",
+                cyclesText: "Broj krugova:",
+                cyclesInfo: "Ova postavka vrijedi za sve vježbe. 1-15 krugova = početnik, 15-30 = srednji nivo, 30-50 = napredni.",
+                
+                // Menu buttons
+                btnDeep: "Duboko disanje (4-7-8)",
+                btnBox: "Kvadratno disanje",
+                btnAlternate: "Alternativno disanje",
+                btnKapalabhati: "Kapalabhati",
+                btnWimhof: "Wim Hof",
+                btnCO2: "CO2 Tolerancija",
+                
+                // Deep Breathing
+                deepTitle: "Duboko disanje (4-7-8)",
+                benefitsDeep: "Benefiti:",
+                deepBenefitsList: [
+                    "Smanjuje stres i anksioznost",
+                    "Pomaže kod nesanice",
+                    "Umiruje nervni sustav",
+                    "Poboljšava koncentraciju"
+                ],
+                deepStep1: "1. Udahni duboko kroz nos (4 sekunde)",
+                deepStep2: "2. Zadrži dah (7 sekundi)",
+                deepStep3: "3. Izdah kroz usta (8 sekundi)",
+                deepRepeat: "Ponavljaj",
+                times: "puta.",
+                btnStartDeep: "Pokreni vježbu",
+                
+                // Box Breathing
+                boxTitle: "Kvadratno disanje",
+                benefitsBox: "Benefiti:",
+                boxBenefitsList: [
+                    "Balansira autonomni nervni sustav",
+                    "Smanjuje stres u trenutku",
+                    "Poboljšava fokus",
+                    "Koristi se u vojskama i sportu"
+                ],
+                boxStep1: "1. Udahni (4 sekunde)",
+                boxStep2: "2. Zadrži dah (4 sekunde)",
+                boxStep3: "3. Izdah (4 sekunde)",
+                boxStep4: "4. Zadrži prazna pluća (4 sekunde)",
+                boxRepeat: "Ponavljaj",
+                btnStartBox: "Pokreni vježbu",
+                
+                // Alternate Breathing
+                alternateTitle: "Alternativno disanje (Nadi Shodhana)",
+                benefitsAlternate: "Benefiti:",
+                alternateBenefitsList: [
+                    "Uravnotežuje lijevu i desnu mozgovnu hemisferu",
+                    "Poboljšava kognitivne funkcije",
+                    "Smanjuje mentalni nemir",
+                    "Povećava svjesnost disanja"
+                ],
+                altStep1: "1. Prstom zatvori desnu nosnicu",
+                altStep2: "2. Udahni lijevom nosnicom (4 sekunde)",
+                altStep3: "3. Zadrži dah (4 sekunde)",
+                altStep4: "4. Otvori desnu, zatvori lijevu nosnicu",
+                altStep5: "5. Izdah desnom nosnicom (6 sekundi)",
+                altRepeat: "Ponavljaj",
+                btnStartAlternate: "Pokreni vježbu",
+                
+                // Kapalabhati
+                kapalabhatiTitle: "Kapalabhati (Osvježavajuće disanje)",
+                benefitsKapalabhati: "Benefiti:",
+                kapalabhatiBenefitsList: [
+                    "Pročišćava pluća i dišne puteve",
+                    "Povećava energiju i budnost",
+                    "Poboljšava probavu",
+                    "Jača trbušne mišiće"
+                ],
+                kapStep1: "1. Udahni normalno kroz nos",
+                kapStep2: "2. Snažno izdiši kontrakcijom trbušnih mišića",
+                kapStep3: "3. Ponavljaj 30 brzih izdaha u 15 sekundi",
+                kapStep4: "4. Nakon serije, duboko udahni i zadrži 15-30 sekundi",
+                kapRepeat: "5. Ponovi",
+                series: "serije",
+                btnStartKapalabhati: "Pokreni vježbu",
+                
+                // Wim Hof
+                wimhofTitle: "Wim Hof metoda",
+                benefitsWimhof: "Benefiti:",
+                wimhofBenefitsList: [
+                    "Povećava energiju i imunitet",
+                    "Poboljšava kontrolu nad stresom",
+                    "Povećava toleranciju na hladnoću",
+                    "Poboljšava cirkulaciju"
+                ],
+                wimStep1: "Faza 1: 20-30 brzih udisaja i Izdaha u 60 sekundi",
+                wimStep2: "Faza 2: Izdah i zadržavanje daha bez zraka (koliko god možeš), zatim pokreni iduću fazu",
+                wimStep3: "Faza 3: Duboki udisaj i zadržavanje daha 15 sekundi",
+                wimRepeat: "Ponovi ciklus",
+                breathsText: "Udisaji:",
+                btnStartPhase1: "Pokreni Fazu 1",
+                btnStartPhase2: "Zadrži Dah (Faza 2)",
+                btnStartPhase3: "Udahni i Zadrži (Faza 3)",
+                btnResetWimhof: "Resetiraj Vježbu",
+                
+                // CO2 Tolerance
+                co2Title: "💨 CO₂ Tolerancija (Kapno-metrijska vježba)",
+                benefitsCO2: "Benefiti:",
+                co2BenefitsList: [
+                    "Povećava toleranciju na CO₂ u krvi",
+                    "Smanjuje osjećaj zadihe i panike",
+                    "Poboljšava sportsku izdržljivost",
+                    "Umiruje autonomni nervni sustav",
+                    "Smanjuje učestalost disanja u mirovanju"
+                ],
+                co2Instructions: "Upute: Postavite trajanje svake faze prema vašoj trenutnoj toleranciji.",
+                co2Tips: "Počnite s kraćim vrijednostima i postupno povećavajte kako vam tolerancija raste.",
+                inhaleLabel: "1. Udah",
+                exhaleLabel: "2. Izdah",
+                holdLabel: "3. Zadržavanje",
+                inhaleDuration: "Trajanje (sekunde):",
+                exhaleDuration: "Trajanje (sekunde):",
+                holdDuration: "Trajanje (sekunde):",
+                inhaleDesc: "Normalan udah kroz nos.",
+                exhaleDesc: "Potpuni, kontrolirani izdah.",
+                holdDesc: "Zadržavanje daha bez udisanja.",
+                summaryInhaleLabel: "Dijafragmalni udah",
+                summaryExhaleLabel: "Izdah",
+                summaryHoldLabel: "Zadržavanje",
+                summaryCyclesLabel: "Broj krugova",
+                btnStartCO2: "Pokreni CO2 vježbu",
+                
+                // UI Texts
+                ready: "SPREMAN",
+                done: "GOTOVO",
+                inhale: "UDIŠI",
+                hold: "ZADRŽI",
+                exhale: "IZDIŠI",
+                pause: "PAUZA",
+                round: "Krug",
+                seriesCount: "Serija",
+                cycle: "Krug:",
+                roundText: "Krug",
+                fastBreathing: "BRZO DISANJE",
+                breatheLeft: "UDIŠI LIJEVOM",
+                breatheRight: "IZDIŠI DESNOM",
+                holdEmpty: "ZADRŽI PRAZNA PLUĆA",
+                preparation: "Priprema...",
+                start: "Početak...",
+                getReady: "Spremno za početak",
+                exerciseComplete: "Vježba završena!",
+                exerciseStopped: "Vježba zaustavljena",
+                rest: "Odmorite se."
+            },
+            en: {
+                appTitle: "🌬️ Breathing Exercises",
+                cyclesLabel: "Number of cycles for all exercises:",
+                cyclesText: "Number of cycles:",
+                cyclesInfo: "This setting applies to all exercises. 1-15 cycles = beginner, 15-30 = intermediate, 30-50 = advanced.",
+                
+                // Menu buttons
+                btnDeep: "Deep Breathing (4-7-8)",
+                btnBox: "Box Breathing",
+                btnAlternate: "Alternate Nostril Breathing",
+                btnKapalabhati: "Kapalabhati",
+                btnWimhof: "Wim Hof Method",
+                btnCO2: "CO₂ Tolerance",
+                
+                // Deep Breathing
+                deepTitle: "Deep Breathing (4-7-8)",
+                benefitsDeep: "Benefits:",
+                deepBenefitsList: [
+                    "Reduces stress and anxiety",
+                    "Helps with insomnia",
+                    "Calms the nervous system",
+                    "Improves concentration"
+                ],
+                deepStep1: "1. Inhale deeply through nose (4 seconds)",
+                deepStep2: "2. Hold breath (7 seconds)",
+                deepStep3: "3. Exhale through mouth (8 seconds)",
+                deepRepeat: "Repeat",
+                times: "times.",
+                btnStartDeep: "Start Exercise",
+                
+                // Box Breathing
+                boxTitle: "Box Breathing",
+                benefitsBox: "Benefits:",
+                boxBenefitsList: [
+                    "Balances autonomic nervous system",
+                    "Reduces immediate stress",
+                    "Improves focus",
+                    "Used in military and sports"
+                ],
+                boxStep1: "1. Inhale (4 seconds)",
+                boxStep2: "2. Hold breath (4 seconds)",
+                boxStep3: "3. Exhale (4 seconds)",
+                boxStep4: "4. Hold with empty lungs (4 seconds)",
+                boxRepeat: "Repeat",
+                btnStartBox: "Start Exercise",
+                
+                // Alternate Breathing
+                alternateTitle: "Alternate Nostril Breathing (Nadi Shodhana)",
+                benefitsAlternate: "Benefits:",
+                alternateBenefitsList: [
+                    "Balances left and right brain hemispheres",
+                    "Improves cognitive functions",
+                    "Reduces mental restlessness",
+                    "Increases breathing awareness"
+                ],
+                altStep1: "1. Close right nostril with finger",
+                altStep2: "2. Inhale through left nostril (4 seconds)",
+                altStep3: "3. Hold breath (4 seconds)",
+                altStep4: "4. Open right, close left nostril",
+                altStep5: "5. Exhale through right nostril (6 seconds)",
+                altRepeat: "Repeat",
+                btnStartAlternate: "Start Exercise",
+                
+                // Kapalabhati
+                kapalabhatiTitle: "Kapalabhati (Skull Shining Breath)",
+                benefitsKapalabhati: "Benefits:",
+                kapalabhatiBenefitsList: [
+                    "Cleanses lungs and respiratory tract",
+                    "Increases energy and alertness",
+                    "Improves digestion",
+                    "Strengthens abdominal muscles"
+                ],
+                kapStep1: "1. Inhale normally through nose",
+                kapStep2: "2. Exhale forcefully with abdominal contraction",
+                kapStep3: "3. Repeat 30 quick exhalations in 15 seconds",
+                kapStep4: "4. After series, inhale deeply and hold 15-30 seconds",
+                kapRepeat: "5. Repeat",
+                series: "series",
+                btnStartKapalabhati: "Start Exercise",
+                
+                // Wim Hof
+                wimhofTitle: "Wim Hof Method",
+                benefitsWimhof: "Benefits:",
+                wimhofBenefitsList: [
+                    "Increases energy and immunity",
+                    "Improves stress control",
+                    "Increases cold tolerance",
+                    "Improves circulation"
+                ],
+                wimStep1: "Phase 1: 20-30 rapid inhalations and exhalations in 60 seconds",
+                wimStep2: "Phase 2: Exhale and hold breath without air (as long as you can), then start next phase",
+                wimStep3: "Phase 3: Deep inhalation and hold breath for 15 seconds",
+                wimRepeat: "Repeat cycle",
+                breathsText: "Breaths:",
+                btnStartPhase1: "Start Phase 1",
+                btnStartPhase2: "Hold Breath (Phase 2)",
+                btnStartPhase3: "Inhale and Hold (Phase 3)",
+                btnResetWimhof: "Reset Exercise",
+                
+                // CO2 Tolerance
+                co2Title: "💨 CO₂ Tolerance (Capnometric Exercise)",
+                benefitsCO2: "Benefits:",
+                co2BenefitsList: [
+                    "Increases tolerance to CO₂ in blood",
+                    "Reduces feeling of breathlessness and panic",
+                    "Improves athletic endurance",
+                    "Calms autonomic nervous system",
+                    "Reduces breathing frequency at rest"
+                ],
+                co2Instructions: "Instructions: Set duration of each phase according to your current tolerance.",
+                co2Tips: "Start with shorter values and gradually increase as your tolerance grows.",
+                inhaleLabel: "1. Inhale",
+                exhaleLabel: "2. Exhale",
+                holdLabel: "3. Retention",
+                inhaleDuration: "Duration (seconds):",
+                exhaleDuration: "Duration (seconds):",
+                holdDuration: "Duration (seconds):",
+                inhaleDesc: "Normal inhalation through nose.",
+                exhaleDesc: "Complete, controlled exhalation.",
+                holdDesc: "Breath retention without inhaling.",
+                summaryInhaleLabel: "Diaphragmatic inhalation",
+                summaryExhaleLabel: "Exhalation",
+                summaryHoldLabel: "Retention",
+                summaryCyclesLabel: "Number of cycles",
+                btnStartCO2: "Start CO₂ Exercise",
+                
+                // UI Texts
+                ready: "READY",
+                done: "DONE",
+                inhale: "INHALE",
+                hold: "HOLD",
+                exhale: "EXHALE",
+                pause: "PAUSE",
+                round: "Round",
+                seriesCount: "Series",
+                cycle: "Round:",
+                roundText: "Round",
+                fastBreathing: "FAST BREATHING",
+                breatheLeft: "INHALE LEFT",
+                breatheRight: "EXHALE RIGHT",
+                holdEmpty: "HOLD EMPTY LUNGS",
+                preparation: "Preparation...",
+                start: "Start...",
+                getReady: "Ready to start",
+                exerciseComplete: "Exercise complete!",
+                exerciseStopped: "Exercise stopped",
+                rest: "Rest."
+            },
+            de: {
+                appTitle: "🌬️ Atemübungen",
+                cyclesLabel: "Anzahl der Zyklen für alle Übungen:",
+                cyclesText: "Anzahl der Zyklen:",
+                cyclesInfo: "Diese Einstellung gilt für alle Übungen. 1-15 Zyklen = Anfänger, 15-30 = Mittelstufe, 30-50 = Fortgeschritten.",
+                
+                // Menu buttons
+                btnDeep: "Tiefes Atmen (4-7-8)",
+                btnBox: "Box-Atmung",
+                btnAlternate: "Wechselatmung",
+                btnKapalabhati: "Kapalabhati",
+                btnWimhof: "Wim Hof Methode",
+                btnCO2: "CO₂ Toleranz",
+                
+                // Deep Breathing
+                deepTitle: "Tiefes Atmen (4-7-8)",
+                benefitsDeep: "Vorteile:",
+                deepBenefitsList: [
+                    "Reduziert Stress und Angst",
+                    "Hilft bei Schlaflosigkeit",
+                    "Beruhigt das Nervensystem",
+                    "Verbessert die Konzentration"
+                ],
+                deepStep1: "1. Tief durch die Nase einatmen (4 Sekunden)",
+                deepStep2: "2. Atem anhalten (7 Sekunden)",
+                deepStep3: "3. Durch den Mund ausatmen (8 Sekunden)",
+                deepRepeat: "Wiederhole",
+                times: "mal.",
+                btnStartDeep: "Übung starten",
+                
+                // Box Breathing
+                boxTitle: "Box-Atmung",
+                benefitsBox: "Vorteile:",
+                boxBenefitsList: [
+                    "Balanciert das autonome Nervensystem",
+                    "Reduziert sofortigen Stress",
+                    "Verbessert den Fokus",
+                    "Wird im Militär und Sport verwendet"
+                ],
+                boxStep1: "1. Einatmen (4 Sekunden)",
+                boxStep2: "2. Atem anhalten (4 Sekunden)",
+                boxStep3: "3. Ausatmen (4 Sekunden)",
+                boxStep4: "4. Mit leeren Lungen halten (4 Sekunden)",
+                boxRepeat: "Wiederhole",
+                btnStartBox: "Übung starten",
+                
+                // Alternate Breathing
+                alternateTitle: "Wechselatmung (Nadi Shodhana)",
+                benefitsAlternate: "Vorteile:",
+                alternateBenefitsList: [
+                    "Balanciert linke und rechte Gehirnhälften",
+                    "Verbessert kognitive Funktionen",
+                    "Reduziert geistige Unruhe",
+                    "Erhöht die Atemwahrnehmung"
+                ],
+                altStep1: "1. Rechtes Nasenloch mit Finger schließen",
+                altStep2: "2. Durch linkes Nasenloch einatmen (4 Sekunden)",
+                altStep3: "3. Atem anhalten (4 Sekunden)",
+                altStep4: "4. Rechtes öffnen, linkes schließen",
+                altStep5: "5. Durch rechtes Nasenloch ausatmen (6 Sekunden)",
+                altRepeat: "Wiederhole",
+                btnStartAlternate: "Übung starten",
+                
+                // Kapalabhati
+                kapalabhatiTitle: "Kapalabhati (Erfrischende Atmung)",
+                benefitsKapalabhati: "Vorteile:",
+                kapalabhatiBenefitsList: [
+                    "Reinigt Lungen und Atemwege",
+                    "Erhöht Energie und Wachsamkeit",
+                    "Verbessert die Verdauung",
+                    "Stärkt Bauchmuskeln"
+                ],
+                kapStep1: "1. Normal durch die Nase einatmen",
+                kapStep2: "2. Kraftvoll mit Bauchkontraktion ausatmen",
+                kapStep3: "3. 30 schnelle Ausatmungen in 15 Sekunden wiederholen",
+                kapStep4: "4. Nach der Serie tief einatmen und 15-30 Sekunden halten",
+                kapRepeat: "5. Wiederhole",
+                series: "Serien",
+                btnStartKapalabhati: "Übung starten",
+                
+                // Wim Hof
+                wimhofTitle: "Wim Hof Methode",
+                benefitsWimhof: "Vorteile:",
+                wimhofBenefitsList: [
+                    "Erhöht Energie und Immunität",
+                    "Verbessert Stresskontrolle",
+                    "Erhöht Kältetoleranz",
+                    "Verbessert die Durchblutung"
+                ],
+                wimStep1: "Phase 1: 20-30 schnelle Ein- und Ausatmungen in 60 Sekunden",
+                wimStep2: "Phase 2: Ausatmen und Atem ohne Luft anhalten (so lange wie möglich), dann nächste Phase starten",
+                wimStep3: "Phase 3: Tiefes Einatmen und Atem 15 Sekunden anhalten",
+                wimRepeat: "Zyklen wiederholen",
+                breathsText: "Atemzüge:",
+                btnStartPhase1: "Phase 1 starten",
+                btnStartPhase2: "Atem anhalten (Phase 2)",
+                btnStartPhase3: "Einatmen und Halten (Phase 3)",
+                btnResetWimhof: "Übung zurücksetzen",
+                
+                // CO2 Tolerance
+                co2Title: "💨 CO₂ Toleranz (Kapnometrische Übung)",
+                benefitsCO2: "Vorteile:",
+                co2BenefitsList: [
+                    "Erhöht Toleranz gegenüber CO₂ im Blut",
+                    "Reduziert Atemnot- und Panikgefühl",
+                    "Verbessert sportliche Ausdauer",
+                    "Beruhigt das autonome Nervensystem",
+                    "Reduziert Atemfrequenz in Ruhe"
+                ],
+                co2Instructions: "Anleitung: Stellen Sie die Dauer jeder Phase gemäß Ihrer aktuellen Toleranz ein.",
+                co2Tips: "Beginnen Sie mit kürzeren Werten und erhöhen Sie diese schrittweise, während Ihre Toleranz wächst.",
+                inhaleLabel: "1. Einatmen",
+                exhaleLabel: "2. Ausatmen",
+                holdLabel: "3. Anhalten",
+                inhaleDuration: "Dauer (Sekunden):",
+                exhaleDuration: "Dauer (Sekunden):",
+                holdDuration: "Dauer (Sekunden):",
+                inhaleDesc: "Normales Einatmen durch die Nase.",
+                exhaleDesc: "Vollständiges, kontrolliertes Ausatmen.",
+                holdDesc: "Atemanhalt ohne Einatmen.",
+                summaryInhaleLabel: "Zwerchfell-Atmung",
+                summaryExhaleLabel: "Ausatmen",
+                summaryHoldLabel: "Anhalten",
+                summaryCyclesLabel: "Anzahl Zyklen",
+                btnStartCO2: "CO₂ Übung starten",
+                
+                // UI Texts
+                ready: "BEREIT",
+                done: "FERTIG",
+                inhale: "EINATMEN",
+                hold: "HALTEN",
+                exhale: "AUSATMEN",
+                pause: "PAUSE",
+                round: "Runde",
+                seriesCount: "Serie",
+                cycle: "Runde:",
+                roundText: "Runde",
+                fastBreathing: "SCHNELL ATMEN",
+                breatheLeft: "LINKS EINATMEN",
+                breatheRight: "RECHTS AUSATMEN",
+                holdEmpty: "LEERE LUNGEN HALTEN",
+                preparation: "Vorbereitung...",
+                start: "Start...",
+                getReady: "Bereit zum Start",
+                exerciseComplete: "Übung beendet!",
+                exerciseStopped: "Übung gestoppt",
+                rest: "Ausruhen."
+            },
+            es: {
+                appTitle: "🌬️ Ejercicios de Respiración",
+                cyclesLabel: "Número de ciclos para todos los ejercicios:",
+                cyclesText: "Número de ciclos:",
+                cyclesInfo: "Esta configuración se aplica a todos los ejercicios. 1-15 ciclos = principiante, 15-30 = intermedio, 30-50 = avanzado.",
+                
+                // Menu buttons
+                btnDeep: "Respiración Profunda (4-7-8)",
+                btnBox: "Respiración Cuadrada",
+                btnAlternate: "Respiración Alterna",
+                btnKapalabhati: "Kapalabhati",
+                btnWimhof: "Método Wim Hof",
+                btnCO2: "Tolerancia CO₂",
+                
+                // Deep Breathing
+                deepTitle: "Respiración Profunda (4-7-8)",
+                benefitsDeep: "Beneficios:",
+                deepBenefitsList: [
+                    "Reduce estrés y ansiedad",
+                    "Ayuda con el insomnio",
+                    "Calma el sistema nervioso",
+                    "Mejora la concentración"
+                ],
+                deepStep1: "1. Inhala profundamente por la nariz (4 segundos)",
+                deepStep2: "2. Retén la respiración (7 segundos)",
+                deepStep3: "3. Exhala por la boca (8 segundos)",
+                deepRepeat: "Repite",
+                times: "veces.",
+                btnStartDeep: "Iniciar Ejercicio",
+                
+                // Box Breathing
+                boxTitle: "Respiración Cuadrada",
+                benefitsBox: "Beneficios:",
+                boxBenefitsList: [
+                    "Equilibra el sistema nervioso autónomo",
+                    "Reduce el estrés inmediato",
+                    "Mejora el enfoque",
+                    "Usado en militares y deportes"
+                ],
+                boxStep1: "1. Inhala (4 segundos)",
+                boxStep2: "2. Retén la respiración (4 segundos)",
+                boxStep3: "3. Exhala (4 segundos)",
+                boxStep4: "4. Retén con pulmones vacíos (4 segundos)",
+                boxRepeat: "Repite",
+                btnStartBox: "Iniciar Ejercicio",
+                
+                // Alternate Breathing
+                alternateTitle: "Respiración Alterna (Nadi Shodhana)",
+                benefitsAlternate: "Beneficios:",
+                alternateBenefitsList: [
+                    "Equilibra hemisferios cerebrales izquierdo y derecho",
+                    "Mejora funciones cognitivas",
+                    "Reduce inquietud mental",
+                    "Aumenta conciencia respiratoria"
+                ],
+                altStep1: "1. Cierra fosa nasal derecha con dedo",
+                altStep2: "2. Inhala por fosa nasal izquierda (4 segundos)",
+                altStep3: "3. Retén la respiración (4 segundos)",
+                altStep4: "4. Abre derecha, cierra izquierda",
+                altStep5: "5. Exhala por fosa nasal derecha (6 segundos)",
+                altRepeat: "Repite",
+                btnStartAlternate: "Iniciar Ejercicio",
+                
+                // Kapalabhati
+                kapalabhatiTitle: "Kapalabhati (Respiración Refrescante)",
+                benefitsKapalabhati: "Beneficios:",
+                kapalabhatiBenefitsList: [
+                    "Limpia pulmones y vías respiratorias",
+                    "Aumenta energía y alerta",
+                    "Mejora digestión",
+                    "Fortalece músculos abdominales"
+                ],
+                kapStep1: "1. Inhala normalmente por nariz",
+                kapStep2: "2. Exhala con fuerza con contracción abdominal",
+                kapStep3: "3. Repite 30 exhalaciones rápidas en 15 segundos",
+                kapStep4: "4. Después de serie, inhala profundamente y retén 15-30 segundos",
+                kapRepeat: "5. Repite",
+                series: "series",
+                btnStartKapalabhati: "Iniciar Ejercicio",
+                
+                // Wim Hof
+                wimhofTitle: "Método Wim Hof",
+                benefitsWimhof: "Beneficios:",
+                wimhofBenefitsList: [
+                    "Aumenta energía e inmunidad",
+                    "Mejora control del estrés",
+                    "Aumenta tolerancia al frío",
+                    "Mejora circulación"
+                ],
+                wimStep1: "Fase 1: 20-30 inhalaciones y exhalaciones rápidas en 60 segundos",
+                wimStep2: "Fase 2: Exhala y retén respiración sin aire (todo lo que puedas), luego inicia fase siguiente",
+                wimStep3: "Fase 3: Inhalación profunda y retén respiración 15 segundos",
+                wimRepeat: "Repite ciclo",
+                breathsText: "Respiraciones:",
+                btnStartPhase1: "Iniciar Fase 1",
+                btnStartPhase2: "Retener Respiración (Fase 2)",
+                btnStartPhase3: "Inhalar y Retener (Fase 3)",
+                btnResetWimhof: "Reiniciar Ejercicio",
+                
+                // CO2 Tolerance
+                co2Title: "💨 Tolerancia CO₂ (Ejercicio Capnométrico)",
+                benefitsCO2: "Beneficios:",
+                co2BenefitsList: [
+                    "Aumenta tolerancia a CO₂ en sangre",
+                    "Reduce sensación de ahogo y pánico",
+                    "Mejora resistencia atlética",
+                    "Calma sistema nervioso autónomo",
+                    "Reduce frecuencia respiratoria en reposo"
+                ],
+                co2Instructions: "Instrucciones: Configure la duración de cada fase según su tolerancia actual.",
+                co2Tips: "Comience con valores más cortos y aumente gradualmente a medida que crece su tolerancia.",
+                inhaleLabel: "1. Inhalar",
+                exhaleLabel: "2. Exhalar",
+                holdLabel: "3. Retención",
+                inhaleDuration: "Duración (segundos):",
+                exhaleDuration: "Duración (segundos):",
+                holdDuration: "Duración (segundos):",
+                inhaleDesc: "Inhalación normal por nariz.",
+                exhaleDesc: "Exhalación completa y controlada.",
+                holdDesc: "Retención de respiración sin inhalar.",
+                summaryInhaleLabel: "Inhalación diafragmática",
+                summaryExhaleLabel: "Exhalación",
+                summaryHoldLabel: "Retención",
+                summaryCyclesLabel: "Número de ciclos",
+                btnStartCO2: "Iniciar Ejercicio CO₂",
+                
+                // UI Texts
+                ready: "LISTO",
+                done: "TERMINADO",
+                inhale: "INHALAR",
+                hold: "RETENER",
+                exhale: "EXHALAR",
+                pause: "PAUSA",
+                round: "Ronda",
+                seriesCount: "Serie",
+                cycle: "Ronda:",
+                roundText: "Ronda",
+                fastBreathing: "RESPIRACIÓN RÁPIDA",
+                breatheLeft: "INHALAR IZQUIERDA",
+                breatheRight: "EXHALAR DERECHA",
+                holdEmpty: "RETENER PULMONES VACÍOS",
+                preparation: "Preparando...",
+                start: "Comenzando...",
+                getReady: "Listo para comenzar",
+                exerciseComplete: "¡Ejercicio completado!",
+                exerciseStopped: "Ejercicio detenido",
+                rest: "Descansar."
+            }
+        };
 
-        // Funkcije za podešavanje CO2 vremena gumbićima
-        function adjustInhaleTime(change) {
-            const slider = document.getElementById('inhale-slider');
-            let newValue = parseInt(slider.value) + change;
-            
-            // Ograniči na min i max vrijednosti
-            newValue = Math.max(parseInt(slider.min), Math.min(parseInt(slider.max), newValue));
-            
-            // Postavi novu vrijednost
-            slider.value = newValue;
-            co2InhaleTime = newValue;
-            
-            // Ažuriraj prikaz
-            document.getElementById('inhale-value').textContent = co2InhaleTime + 's';
-            document.getElementById('summary-inhale').textContent = co2InhaleTime + 's';
-            
-            // Zvučna povratna informacija
-            playBeep(50, change > 0 ? 700 : 500);
+        // ========== POMOĆNE FUNKCIJE ==========
+        
+        // Audio kontekst s odgođenom inicijalizacijom
+        function getAudioContext() {
+            if (!audioCtx) {
+                try {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                    audioInitialized = true;
+                } catch (e) {
+                    console.log("Web Audio API nije podržan u ovom pregledniku");
+                    return null;
+                }
+            }
+            return audioCtx;
         }
 
-        function adjustExhaleTime(change) {
-            const slider = document.getElementById('exhale-slider');
-            let newValue = parseInt(slider.value) + change;
+        // Funkcija za reprodukciju beep zvuka
+        function playBeep(duration = 200, frequency = 800, type = "sine") {
+            // Inicijaliziraj AudioContext samo nakon korisničke interakcije
+            if (!audioInitialized) {
+                // Pokušaj inicijalizirati na prvi klik
+                getAudioContext();
+                return;
+            }
             
-            // Ograniči na min i max vrijednosti
-            newValue = Math.max(parseInt(slider.min), Math.min(parseInt(slider.max), newValue));
+            const ctx = getAudioContext();
+            if (!ctx) return;
             
-            // Postavi novu vrijednost
-            slider.value = newValue;
-            co2ExhaleTime = newValue;
-            
-            // Ažuriraj prikaz
-            document.getElementById('exhale-value').textContent = co2ExhaleTime + 's';
-            document.getElementById('summary-exhale').textContent = co2ExhaleTime + 's';
-            
-            // Zvučna povratna informacija
-            playBeep(50, change > 0 ? 700 : 500);
+            try {
+                // Ako je AudioContext suspendiran (jer preglednici blokiraju audio prije interakcije)
+                if (ctx.state === 'suspended') {
+                    ctx.resume();
+                }
+                
+                const oscillator = ctx.createOscillator();
+                const gainNode = ctx.createGain();
+                
+                oscillator.type = type;
+                oscillator.frequency.value = frequency;
+                oscillator.connect(gainNode);
+                gainNode.connect(ctx.destination);
+                
+                gainNode.gain.setValueAtTime(0.5, ctx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration/1000);
+                
+                oscillator.start();
+                oscillator.stop(ctx.currentTime + duration/1000);
+            } catch (e) {
+                console.log("Greška pri reprodukciji zvuka:", e);
+            }
         }
 
-        function adjustHoldTime(change) {
-            const slider = document.getElementById('hold-slider');
-            let newValue = parseInt(slider.value) + change;
+        // Funkcija za čišćenje svih intervala
+        function clearAllIntervals() {
+            // Očisti CO2 interval
+            if (co2Interval) {
+                clearInterval(co2Interval);
+                co2Interval = null;
+            }
             
-            // Ograniči na min i max vrijednosti
-            newValue = Math.max(parseInt(slider.min), Math.min(parseInt(slider.max), newValue));
+            // Očisti Wim Hof timere
+            if (phase1Timer) {
+                clearInterval(phase1Timer);
+                phase1Timer = null;
+            }
+            if (phase2Timer) {
+                clearInterval(phase2Timer);
+                phase2Timer = null;
+            }
+            if (phase3Timer) {
+                clearTimeout(phase3Timer);
+                phase3Timer = null;
+            }
             
-            // Postavi novu vrijednost
-            slider.value = newValue;
-            co2HoldTime = newValue;
-            
-            // Ažuriraj prikaz
-            document.getElementById('hold-value').textContent = co2HoldTime + 's';
-            document.getElementById('summary-hold').textContent = co2HoldTime + 's';
-            
-            // Zvučna povratna informacija
-            playBeep(50, change > 0 ? 700 : 500);
+            // Očisti ostale intervale
+            activeIntervals.forEach(interval => {
+                clearInterval(interval);
+            });
+            activeIntervals = [];
         }
 
-        // Funkcija za ažuriranje svih brojača krugova
+        // Funkcija za zaustavljanje svih vježbi
+        function stopAllExercises() {
+            clearAllIntervals();
+            
+            // Zaustavi CO2 vježbu
+            if (isCO2Running) {
+                isCO2Running = false;
+                const t = translations[document.body.getAttribute('data-lang')];
+                document.getElementById('co2-phase-display').textContent = t.exerciseStopped;
+                document.getElementById('co2-circle').textContent = t.pause;
+            }
+            
+            // Resetiraj Wim Hof
+            resetWimHof();
+        }
+
+        // ========== JEZIČNE FUNKCIJE ==========
+        
+        function cycleLanguage() {
+            const languages = [
+                {code: 'hr', flag: '🇭🇷', name: 'HR'},
+                {code: 'en', flag: '🇬🇧', name: 'EN'},
+                {code: 'de', flag: '🇩🇪', name: 'DE'},
+                {code: 'es', flag: '🇪🇸', name: 'ES'}
+            ];
+            
+            const currentLang = document.body.getAttribute('data-lang');
+            const currentIndex = languages.findIndex(lang => lang.code === currentLang);
+            const nextIndex = (currentIndex + 1) % languages.length;
+            const nextLang = languages[nextIndex];
+            
+            // Postavi novi jezik
+            document.body.setAttribute('data-lang', nextLang.code);
+            document.documentElement.lang = nextLang.code; // Za accessibility
+            localStorage.setItem('breathing-language', nextLang.code);
+            updateLanguage(nextLang.code);
+            
+            // Ažuriraj gumb
+            document.getElementById('current-lang-flag').textContent = nextLang.flag;
+            document.getElementById('current-lang-name').textContent = nextLang.name;
+            
+            // Zvučna povratna informacija
+            playBeep(100, 600 + (nextIndex * 50));
+        }
+
+        // Funkcija za ažuriranje teksta na stranici
+        function updateLanguage(lang) {
+            const t = translations[lang];
+            if (!t) return;
+            
+            // Ažuriraj sve elemente
+            document.getElementById('app-title').textContent = t.appTitle;
+            document.getElementById('cycles-label').textContent = t.cyclesLabel;
+            document.getElementById('cycles-text').textContent = t.cyclesText;
+            document.getElementById('cycles-info').innerHTML = `<p>${escapeHtml(t.cyclesInfo)}</p>`;
+            
+            // Menu buttons
+            document.getElementById('btn-deep').textContent = t.btnDeep;
+            document.getElementById('btn-box').textContent = t.btnBox;
+            document.getElementById('btn-alternate').textContent = t.btnAlternate;
+            document.getElementById('btn-kapalabhati').textContent = t.btnKapalabhati;
+            document.getElementById('btn-wimhof').textContent = t.btnWimhof;
+            document.getElementById('btn-co2').textContent = t.btnCO2;
+            
+            // Deep Breathing
+            document.getElementById('deep-title').textContent = t.deepTitle;
+            document.getElementById('benefits-deep').textContent = t.benefitsDeep;
+            updateList('deep-benefits-list', t.deepBenefitsList);
+            document.getElementById('deep-step1').textContent = t.deepStep1;
+            document.getElementById('deep-step2').textContent = t.deepStep2;
+            document.getElementById('deep-step3').textContent = t.deepStep3;
+            document.getElementById('deep-repeat').innerHTML = `${escapeHtml(t.deepRepeat)} <span id="deep-cycle-count">${globalCycles}</span> ${escapeHtml(t.times)}`;
+            document.getElementById('btn-start-deep').textContent = t.btnStartDeep;
+            
+            // Box Breathing
+            document.getElementById('box-title').textContent = t.boxTitle;
+            document.getElementById('benefits-box').textContent = t.benefitsBox;
+            updateList('box-benefits-list', t.boxBenefitsList);
+            document.getElementById('box-step1').textContent = t.boxStep1;
+            document.getElementById('box-step2').textContent = t.boxStep2;
+            document.getElementById('box-step3').textContent = t.boxStep3;
+            document.getElementById('box-step4').textContent = t.boxStep4;
+            document.getElementById('box-repeat').innerHTML = `${escapeHtml(t.boxRepeat)} <span id="box-cycle-count">${globalCycles}</span> ${escapeHtml(t.times)}`;
+            document.getElementById('btn-start-box').textContent = t.btnStartBox;
+            
+            // Alternate Breathing
+            document.getElementById('alternate-title').textContent = t.alternateTitle;
+            document.getElementById('benefits-alternate').textContent = t.benefitsAlternate;
+            updateList('alternate-benefits-list', t.alternateBenefitsList);
+            document.getElementById('alt-step1').textContent = t.altStep1;
+            document.getElementById('alt-step2').textContent = t.altStep2;
+            document.getElementById('alt-step3').textContent = t.altStep3;
+            document.getElementById('alt-step4').textContent = t.altStep4;
+            document.getElementById('alt-step5').textContent = t.altStep5;
+            document.getElementById('alt-repeat').innerHTML = `${escapeHtml(t.altRepeat)} <span id="alt-cycle-count">${globalCycles}</span> ${escapeHtml(t.times)}`;
+            document.getElementById('btn-start-alternate').textContent = t.btnStartAlternate;
+            
+            // Kapalabhati
+            document.getElementById('kapalabhati-title').textContent = t.kapalabhatiTitle;
+            document.getElementById('benefits-kapalabhati').textContent = t.benefitsKapalabhati;
+            updateList('kapalabhati-benefits-list', t.kapalabhatiBenefitsList);
+            document.getElementById('kap-step1').textContent = t.kapStep1;
+            document.getElementById('kap-step2').textContent = t.kapStep2;
+            document.getElementById('kap-step3').textContent = t.kapStep3;
+            document.getElementById('kap-step4').textContent = t.kapStep4;
+            document.getElementById('kap-repeat').innerHTML = `${escapeHtml(t.kapRepeat)} <span id="kap-cycle-count">${globalCycles}</span> ${escapeHtml(t.series)}`;
+            document.getElementById('btn-start-kapalabhati').textContent = t.btnStartKapalabhati;
+            
+            // Wim Hof
+            document.getElementById('wimhof-title').textContent = t.wimhofTitle;
+            document.getElementById('benefits-wimhof').textContent = t.benefitsWimhof;
+            updateList('wimhof-benefits-list', t.wimhofBenefitsList);
+            
+            const wimStep1Parts = t.wimStep1.split(':');
+            document.getElementById('wim-step1').innerHTML = wimStep1Parts.length > 1 ? 
+                `<strong>${escapeHtml(wimStep1Parts[0])}:</strong> ${escapeHtml(wimStep1Parts[1])}` : 
+                escapeHtml(t.wimStep1);
+            
+            const wimStep2Parts = t.wimStep2.split(':');
+            document.getElementById('wim-step2').innerHTML = wimStep2Parts.length > 1 ? 
+                `<strong>${escapeHtml(wimStep2Parts[0])}:</strong> ${escapeHtml(wimStep2Parts[1])}` : 
+                escapeHtml(t.wimStep2);
+            
+            const wimStep3Parts = t.wimStep3.split(':');
+            document.getElementById('wim-step3').innerHTML = wimStep3Parts.length > 1 ? 
+                `<strong>${escapeHtml(wimStep3Parts[0])}:</strong> ${escapeHtml(wimStep3Parts[1])}` : 
+                escapeHtml(t.wimStep3);
+            
+            document.getElementById('wim-repeat').innerHTML = `${escapeHtml(t.wimRepeat)} <span id="wim-cycle-count">${globalCycles}</span> ${escapeHtml(t.times || 'puta')}`;
+            document.getElementById('breaths-text').textContent = t.breathsText;
+            document.getElementById('start-phase1').textContent = t.btnStartPhase1;
+            document.getElementById('start-phase2').textContent = t.btnStartPhase2;
+            document.getElementById('start-phase3').textContent = t.btnStartPhase3;
+            document.getElementById('btn-reset-wimhof').textContent = t.btnResetWimhof;
+            
+            // CO2 Tolerance
+            document.getElementById('co2-title').textContent = t.co2Title;
+            document.getElementById('benefits-co2').textContent = t.benefitsCO2;
+            updateList('co2-benefits-list', t.co2BenefitsList);
+            
+            const co2InstructionsParts = t.co2Instructions.split(':');
+            document.getElementById('co2-instructions').innerHTML = co2InstructionsParts.length > 1 ? 
+                `<strong>${escapeHtml(co2InstructionsParts[0])}:</strong> ${escapeHtml(co2InstructionsParts[1])}` : 
+                escapeHtml(t.co2Instructions);
+            
+            document.getElementById('co2-tips').textContent = t.co2Tips;
+            document.getElementById('inhale-label').textContent = t.inhaleLabel;
+            document.getElementById('exhale-label').textContent = t.exhaleLabel;
+            document.getElementById('hold-label').textContent = t.holdLabel;
+            document.getElementById('inhale-duration').textContent = t.inhaleDuration;
+            document.getElementById('exhale-duration').textContent = t.exhaleDuration;
+            document.getElementById('hold-duration').textContent = t.holdDuration;
+            document.getElementById('inhale-desc').textContent = t.inhaleDesc;
+            document.getElementById('exhale-desc').textContent = t.exhaleDesc;
+            document.getElementById('hold-desc').textContent = t.holdDesc;
+            document.getElementById('summary-inhale-label').textContent = t.summaryInhaleLabel;
+            document.getElementById('summary-exhale-label').textContent = t.summaryExhaleLabel;
+            document.getElementById('summary-hold-label').textContent = t.summaryHoldLabel;
+            document.getElementById('summary-cycles-label').textContent = t.summaryCyclesLabel;
+            document.getElementById('btn-start-co2').textContent = t.btnStartCO2;
+            
+            // Ažuriraj dinamičke tekstove
+            updateDynamicTexts(lang);
+        }
+
+        function updateList(elementId, items) {
+            const list = document.getElementById(elementId);
+            if (!list) return;
+            
+            list.innerHTML = '';
+            items.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = item;
+                list.appendChild(li);
+            });
+        }
+
+        function updateDynamicTexts(lang) {
+            const t = translations[lang];
+            if (!t) return;
+            
+            // Ažuriraj statusne tekstove u vježbama ako su aktivne
+            const circles = document.querySelectorAll('.circle');
+            circles.forEach(circle => {
+                const currentText = circle.textContent;
+                
+                // Provjeri svaki mogući tekst u svim jezicima
+                const allTexts = Object.values(translations).reduce((acc, translation) => {
+                    return {
+                        ...acc,
+                        ready: translation.ready,
+                        done: translation.done,
+                        inhale: translation.inhale,
+                        hold: translation.hold,
+                        exhale: translation.exhale,
+                        pause: translation.pause,
+                        fastBreathing: translation.fastBreathing,
+                        breatheLeft: translation.breatheLeft,
+                        breatheRight: translation.breatheRight,
+                        holdEmpty: translation.holdEmpty
+                    };
+                }, {});
+                
+                // Pronađi odgovarajući tekst
+                for (const [key, value] of Object.entries(allTexts)) {
+                    if (currentText === value && t[key]) {
+                        circle.textContent = t[key];
+                        break;
+                    }
+                }
+            });
+            
+            // Ažuriraj brojače krugova
+            const cycleCounters = document.querySelectorAll('.cycle-counter');
+            cycleCounters.forEach(counter => {
+                const text = counter.textContent;
+                const match = text.match(/(.+):\s*(\d+)\/(\d+)/);
+                if (match) {
+                    const [, label, current, total] = match;
+                    // Pronađi odgovarajući label
+                    if (label.includes('Krug') || label.includes('Round') || 
+                        label.includes('Runde') || label.includes('Ronda')) {
+                        counter.textContent = `${t.round}: ${current}/${total}`;
+                    } else if (label.includes('Serija') || label.includes('Series') || 
+                               label.includes('Serie')) {
+                        counter.textContent = `${t.seriesCount}: ${current}/${total}`;
+                    }
+                }
+            });
+            
+            // Ažuriraj CO2 prikaz
+            const co2PhaseDisplay = document.getElementById('co2-phase-display');
+            if (co2PhaseDisplay) {
+                const currentText = co2PhaseDisplay.textContent;
+                
+                // Provjeri svaki mogući tekst
+                const allPhaseTexts = Object.values(translations).reduce((acc, translation) => ({
+                    ...acc,
+                    getReady: translation.getReady,
+                    start: translation.start,
+                    preparation: translation.preparation,
+                    exerciseComplete: translation.exerciseComplete,
+                    exerciseStopped: translation.exerciseStopped
+                }), {});
+                
+                for (const [key, value] of Object.entries(allPhaseTexts)) {
+                    if (currentText.includes(value) && t[key]) {
+                        co2PhaseDisplay.textContent = t[key] + 
+                            (key === 'exerciseComplete' ? ' ' + t.rest : '');
+                        break;
+                    }
+                }
+            }
+        }
+
+        // XSS zaštita
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // ========== TEME I POSTAVKE ==========
+        
+        function getCurrentTheme() {
+            const savedTheme = localStorage.getItem('breathing-theme');
+            if (savedTheme) return savedTheme;
+            
+            // Automatsko prepoznavanje vremena
+            const now = new Date();
+            const hour = now.getHours();
+            const isNightTime = hour >= 20 || hour <= 6;
+            
+            return isNightTime ? 'dark' : 'light';
+        }
+
+        function setTheme(theme) {
+            document.body.setAttribute('data-theme', theme);
+            localStorage.setItem('breathing-theme', theme);
+            
+            // Ažuriraj ikone
+            const sunIcon = document.querySelector('.sun-icon');
+            const moonIcon = document.querySelector('.moon-icon');
+            
+            if (theme === 'dark') {
+                if (sunIcon) sunIcon.textContent = '🌙';
+                if (moonIcon) moonIcon.textContent = '☀️';
+            } else {
+                if (sunIcon) sunIcon.textContent = '☀️';
+                if (moonIcon) moonIcon.textContent = '🌙';
+            }
+        }
+
+        function toggleTheme() {
+            const currentTheme = document.body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            setTheme(newTheme);
+            
+            playBeep(100, newTheme === 'dark' ? 500 : 700);
+        }
+
+        function getCurrentLanguage() {
+            const savedLang = localStorage.getItem('breathing-language');
+            return savedLang || 'hr';
+        }
+
+        // ========== CYCLE COUNTER FUNCTIONS ==========
+        
         function updateAllCycleCounts() {
             const cycleElements = {
                 'deep-cycle-count': globalCycles,
@@ -1130,125 +2051,140 @@
             }
             
             // Ažuriraj vrijednost pokazivača
-            document.getElementById('cycles-value').textContent = globalCycles;
-        }
-
-        // TEMA - automatsko prepoznavanje vremena i spremanje u localStorage
-        function getCurrentTheme() {
-            const savedTheme = localStorage.getItem('breathing-theme');
-            if (savedTheme) return savedTheme;
-            
-            // Automatsko prepoznavanje vremena
-            const now = new Date();
-            const hour = now.getHours();
-            const isNightTime = hour >= 20 || hour <= 6; // 20:00 - 6:00
-            
-            return isNightTime ? 'dark' : 'light';
-        }
-
-        function setTheme(theme) {
-            document.body.setAttribute('data-theme', theme);
-            localStorage.setItem('breathing-theme', theme);
-            
-            // Ažuriraj ikone
-            const sunIcon = document.querySelector('.sun-icon');
-            const moonIcon = document.querySelector('.moon-icon');
-            
-            if (theme === 'dark') {
-                sunIcon.textContent = '🌙';
-                moonIcon.textContent = '☀️';
-            } else {
-                sunIcon.textContent = '☀️';
-                moonIcon.textContent = '🌙';
+            const valueDisplay = document.getElementById('cycles-value');
+            if (valueDisplay) {
+                valueDisplay.textContent = globalCycles;
             }
-        }
-
-        function toggleTheme() {
-            const currentTheme = document.body.getAttribute('data-theme');
-            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-            setTheme(newTheme);
             
-            // Zvučna povratna informacija
-            playBeep(100, newTheme === 'dark' ? 500 : 700);
+            // Ažuriraj CO2 točkice
+            updateCO2CycleDots();
         }
 
-        // Funkcije za ažuriranje brojača krugova
         function updateCycleCounter(counterId, cycles, totalCycles) {
             const counter = document.getElementById(counterId);
-            if (counter) {
-                counter.textContent = `Krug: ${cycles}/${totalCycles}`;
-                
-                if (cycles === totalCycles) {
-                    counter.style.backgroundColor = "var(--accent-color)";
-                    counter.style.borderColor = "var(--accent-color)";
-                } else if (cycles > totalCycles * 0.75) {
-                    counter.style.backgroundColor = "var(--warning-color)";
-                    counter.style.borderColor = "var(--warning-color)";
-                }
+            if (!counter) return;
+            
+            const t = translations[document.body.getAttribute('data-lang')];
+            counter.textContent = `${t.round}: ${cycles}/${totalCycles}`;
+            
+            if (cycles === totalCycles) {
+                counter.style.backgroundColor = "var(--accent-color)";
+                counter.style.borderColor = "var(--accent-color)";
+            } else if (cycles > totalCycles * 0.75) {
+                counter.style.backgroundColor = "var(--warning-color)";
+                counter.style.borderColor = "var(--warning-color)";
+            } else {
+                counter.style.backgroundColor = "";
+                counter.style.borderColor = "var(--primary-color)";
             }
         }
 
         function updateKapalabhatiCounter(cycles, totalCycles) {
             const counter = document.getElementById('kapalabhati-cycle-counter');
-            if (counter) {
-                counter.textContent = `Serija: ${cycles}/${totalCycles}`;
-                
-                if (cycles === totalCycles) {
-                    counter.style.backgroundColor = "var(--accent-color)";
-                    counter.style.borderColor = "var(--accent-color)";
-                } else if (cycles > totalCycles * 0.75) {
-                    counter.style.backgroundColor = "var(--warning-color)";
-                    counter.style.borderColor = "var(--warning-color)";
-                }
+            if (!counter) return;
+            
+            const t = translations[document.body.getAttribute('data-lang')];
+            counter.textContent = `${t.seriesCount}: ${cycles}/${totalCycles}`;
+            
+            if (cycles === totalCycles) {
+                counter.style.backgroundColor = "var(--accent-color)";
+                counter.style.borderColor = "var(--accent-color)";
+            } else if (cycles > totalCycles * 0.75) {
+                counter.style.backgroundColor = "var(--warning-color)";
+                counter.style.borderColor = "var(--warning-color)";
+            } else {
+                counter.style.backgroundColor = "";
+                counter.style.borderColor = "var(--primary-color)";
             }
         }
 
-        // Inicijalizacija pri učitavanju
-        window.onload = function() {
-            // Postavi temu
-            const initialTheme = getCurrentTheme();
-            setTheme(initialTheme);
+        function showFeedback() {
+            const valueDisplay = document.getElementById('cycles-value');
+            if (!valueDisplay) return;
             
-            // Postavi početnu vrijednost slidera
-            const slider = document.getElementById('global-cycles');
-            slider.value = globalCycles;
-            updateAllCycleCounts();
+            valueDisplay.style.transform = 'scale(1.3)';
+            valueDisplay.style.color = 'var(--danger-color)';
+            setTimeout(() => {
+                valueDisplay.style.transform = 'scale(1)';
+                valueDisplay.style.color = 'var(--secondary-color)';
+            }, 300);
             
-            // Dodaj event listener na slider
-            slider.addEventListener('input', function() {
-                globalCycles = parseInt(this.value);
-                updateAllCycleCounts();
-                showFeedback();
-            });
-            
-            // CO2 slider event listeneri
-            document.getElementById('inhale-slider').addEventListener('input', function() {
-                co2InhaleTime = parseInt(this.value);
-                document.getElementById('inhale-value').textContent = co2InhaleTime + 's';
-                document.getElementById('summary-inhale').textContent = co2InhaleTime + 's';
-                playBeep(50, 600);
-            });
-            
-            document.getElementById('exhale-slider').addEventListener('input', function() {
-                co2ExhaleTime = parseInt(this.value);
-                document.getElementById('exhale-value').textContent = co2ExhaleTime + 's';
-                document.getElementById('summary-exhale').textContent = co2ExhaleTime + 's';
-                playBeep(50, 600);
-            });
-            
-            document.getElementById('hold-slider').addEventListener('input', function() {
-                co2HoldTime = parseInt(this.value);
-                document.getElementById('hold-value').textContent = co2HoldTime + 's';
-                document.getElementById('summary-hold').textContent = co2HoldTime + 's';
-                playBeep(50, 600);
-            });
-            
-            // Inicijaliziraj CO2 prikaz točkica
+            playBeep(100, 600);
             updateCO2CycleDots();
-        };
+        }
+
+        // ========== UI FUNKCIJE ==========
+        
+        function showExercise(exerciseId) {
+            // Zaustavi sve trenutne vježbe
+            stopAllExercises();
+            
+            // Sakrij sve vježbe
+            document.querySelectorAll('.exercise-container').forEach(div => {
+                div.classList.remove('active');
+            });
+            
+            // Prikaži odabranu vježbu
+            const exerciseElement = document.getElementById(exerciseId);
+            if (exerciseElement) {
+                exerciseElement.classList.add('active');
+            }
+        }
+
+        // ========== CO2 FUNKCIJE ==========
+        
+        function adjustInhaleTime(change) {
+            const slider = document.getElementById('inhale-slider');
+            if (!slider) return;
+            
+            let newValue = parseInt(slider.value) + change;
+            newValue = Math.max(parseInt(slider.min), Math.min(parseInt(slider.max), newValue));
+            
+            slider.value = newValue;
+            co2InhaleTime = newValue;
+            
+            document.getElementById('inhale-value').textContent = co2InhaleTime + 's';
+            document.getElementById('summary-inhale').textContent = co2InhaleTime + 's';
+            
+            playBeep(50, change > 0 ? 700 : 500);
+        }
+
+        function adjustExhaleTime(change) {
+            const slider = document.getElementById('exhale-slider');
+            if (!slider) return;
+            
+            let newValue = parseInt(slider.value) + change;
+            newValue = Math.max(parseInt(slider.min), Math.min(parseInt(slider.max), newValue));
+            
+            slider.value = newValue;
+            co2ExhaleTime = newValue;
+            
+            document.getElementById('exhale-value').textContent = co2ExhaleTime + 's';
+            document.getElementById('summary-exhale').textContent = co2ExhaleTime + 's';
+            
+            playBeep(50, change > 0 ? 700 : 500);
+        }
+
+        function adjustHoldTime(change) {
+            const slider = document.getElementById('hold-slider');
+            if (!slider) return;
+            
+            let newValue = parseInt(slider.value) + change;
+            newValue = Math.max(parseInt(slider.min), Math.min(parseInt(slider.max), newValue));
+            
+            slider.value = newValue;
+            co2HoldTime = newValue;
+            
+            document.getElementById('hold-value').textContent = co2HoldTime + 's';
+            document.getElementById('summary-hold').textContent = co2HoldTime + 's';
+            
+            playBeep(50, change > 0 ? 700 : 500);
+        }
 
         function updateCO2CycleDots() {
             const container = document.getElementById('co2-cycle-display');
+            if (!container) return;
+            
             container.innerHTML = '';
             
             for (let i = 0; i < globalCycles; i++) {
@@ -1261,49 +2197,30 @@
             }
         }
 
-        function showFeedback() {
-            const valueDisplay = document.getElementById('cycles-value');
-            valueDisplay.style.transform = 'scale(1.3)';
-            valueDisplay.style.color = 'var(--danger-color)';
-            setTimeout(() => {
-                valueDisplay.style.transform = 'scale(1)';
-                valueDisplay.style.color = 'var(--secondary-color)';
-            }, 300);
-            
-            // Kratki zvučni signal za potvrdu
-            playBeep(100, 600);
-            
-            // Ažuriraj CO2 točkice
-            updateCO2CycleDots();
-        }
-
-        function showExercise(exerciseId) {
-            document.querySelectorAll('.exercise-container').forEach(div => {
-                div.classList.remove('active');
-            });
-            document.getElementById(exerciseId).classList.add('active');
-            
-            // Resetiraj vježbe ako prelazimo
-            if (exerciseId !== 'wimhof') {
-                resetWimHof();
-            }
-            if (exerciseId !== 'co2') {
-                stopCO2Exercise();
-            }
-        }
-
-        // CO2 FUNKCIJE
         function startCO2Exercise() {
+            // Zaustavi ako več radi
             if (isCO2Running) return;
+            
+            // Očisti postojeći interval
+            if (co2Interval) {
+                clearInterval(co2Interval);
+                co2Interval = null;
+            }
             
             isCO2Running = true;
             co2Round = 0;
             
             // Resetiraj UI
-            document.getElementById('co2-circle').textContent = 'SPREMAN';
-            document.getElementById('co2-timer').textContent = '';
-            document.getElementById('co2-progress').style.width = '0%';
-            document.getElementById('co2-phase-display').textContent = 'Početak...';
+            const t = translations[document.body.getAttribute('data-lang')];
+            const circle = document.getElementById('co2-circle');
+            const timer = document.getElementById('co2-timer');
+            const progress = document.getElementById('co2-progress');
+            const phaseDisplay = document.getElementById('co2-phase-display');
+            
+            if (circle) circle.textContent = t.ready;
+            if (timer) timer.textContent = '';
+            if (progress) progress.style.width = '0%';
+            if (phaseDisplay) phaseDisplay.textContent = t.start;
             
             updateCO2CycleCounter();
             updateCO2CycleDots();
@@ -1326,9 +2243,15 @@
                 co2Interval = null;
             }
             
-            document.getElementById('co2-phase-display').textContent = 'Vježba zaustavljena';
-            document.getElementById('co2-circle').textContent = 'PAUZA';
-            document.getElementById('co2-circle').style.backgroundColor = 'var(--warning-color)';
+            const t = translations[document.body.getAttribute('data-lang')];
+            const phaseDisplay = document.getElementById('co2-phase-display');
+            const circle = document.getElementById('co2-circle');
+            
+            if (phaseDisplay) phaseDisplay.textContent = t.exerciseStopped;
+            if (circle) {
+                circle.textContent = t.pause;
+                circle.style.backgroundColor = 'var(--warning-color)';
+            }
             
             playBeep(300, 600);
         }
@@ -1340,55 +2263,83 @@
             updateCO2CycleCounter();
             updateCO2CycleDots();
             
-            document.getElementById('co2-circle').textContent = 'SPREMAN';
-            document.getElementById('co2-circle').style.backgroundColor = 'var(--co2-color)';
-            document.getElementById('co2-timer').textContent = '';
-            document.getElementById('co2-progress').style.width = '0%';
-            document.getElementById('co2-phase-display').textContent = 'Spremno za početak';
+            const t = translations[document.body.getAttribute('data-lang')];
+            const circle = document.getElementById('co2-circle');
+            const timer = document.getElementById('co2-timer');
+            const progress = document.getElementById('co2-progress');
+            const phaseDisplay = document.getElementById('co2-phase-display');
+            
+            if (circle) {
+                circle.textContent = t.ready;
+                circle.style.backgroundColor = 'var(--co2-color)';
+            }
+            if (timer) timer.textContent = '';
+            if (progress) progress.style.width = '0%';
+            if (phaseDisplay) phaseDisplay.textContent = t.getReady;
         }
 
         function updateCO2CycleCounter() {
             const counter = document.getElementById('co2-cycle-counter');
-            if (counter) {
-                counter.textContent = `Krug: ${co2Round}/${globalCycles}`;
-                
-                if (co2Round === globalCycles) {
-                    counter.style.backgroundColor = "var(--accent-color)";
-                    counter.style.borderColor = "var(--accent-color)";
-                } else if (co2Round > globalCycles * 0.75) {
-                    counter.style.backgroundColor = "var(--warning-color)";
-                    counter.style.borderColor = "var(--warning-color)";
-                }
+            if (!counter) return;
+            
+            const t = translations[document.body.getAttribute('data-lang')];
+            counter.textContent = `${t.round}: ${co2Round}/${globalCycles}`;
+            
+            if (co2Round === globalCycles) {
+                counter.style.backgroundColor = "var(--accent-color)";
+                counter.style.borderColor = "var(--accent-color)";
+            } else if (co2Round > globalCycles * 0.75) {
+                counter.style.backgroundColor = "var(--warning-color)";
+                counter.style.borderColor = "var(--warning-color)";
+            } else {
+                counter.style.backgroundColor = "";
+                counter.style.borderColor = "var(--primary-color)";
             }
         }
 
         function startCO2Cycle() {
-            if (co2Round > globalCycles) {
+            if (!isCO2Running || co2Round > globalCycles) {
                 // Završena vježba
-                document.getElementById('co2-phase-display').textContent = 'Vježba završena!';
-                document.getElementById('co2-circle').textContent = 'GOTOVO';
-                document.getElementById('co2-circle').style.backgroundColor = 'var(--accent-color)';
+                const t = translations[document.body.getAttribute('data-lang')];
+                const phaseDisplay = document.getElementById('co2-phase-display');
+                const circle = document.getElementById('co2-circle');
+                
+                if (phaseDisplay) phaseDisplay.textContent = t.exerciseComplete + ' ' + t.rest;
+                if (circle) {
+                    circle.textContent = t.done;
+                    circle.style.backgroundColor = 'var(--accent-color)';
+                }
+                
                 isCO2Running = false;
                 playBeep(500, 1200);
                 return;
             }
             
-            // Faza 1: Udah
-            document.getElementById('co2-phase-display').textContent = 'UDIŠI kroz nos';
-            document.getElementById('co2-circle').textContent = 'UDIŠI';
-            document.getElementById('co2-circle').style.backgroundColor = 'var(--accent-color)';
-            
-            let timeLeft = co2InhaleTime;
+            const t = translations[document.body.getAttribute('data-lang')];
+            const phaseDisplay = document.getElementById('co2-phase-display');
+            const circle = document.getElementById('co2-circle');
             const timerElement = document.getElementById('co2-timer');
             const progressBar = document.getElementById('co2-progress');
             
+            if (!phaseDisplay || !circle || !timerElement || !progressBar) return;
+            
+            // Faza 1: Udah
+            phaseDisplay.textContent = t.inhale + ' ' + t.inhaleDesc.split('.')[0];
+            circle.textContent = t.inhale;
+            circle.style.backgroundColor = 'var(--accent-color)';
+            
+            let timeLeft = co2InhaleTime;
             timerElement.textContent = timeLeft;
             progressBar.style.width = '0%';
+            
+            // Očisti postojeći interval
+            if (co2Interval) {
+                clearInterval(co2Interval);
+            }
             
             co2Interval = setInterval(() => {
                 timerElement.textContent = timeLeft;
                 
-                // Ažuriraj progress bar
                 const progress = 100 - ((timeLeft - 1) / co2InhaleTime * 100);
                 progressBar.style.width = `${progress}%`;
                 
@@ -1396,12 +2347,11 @@
                     clearInterval(co2Interval);
                     playBeep(300, 800);
                     
-                    // Brzi prijelaz (samo 200ms umjesto 500ms)
                     setTimeout(() => {
                         // Faza 2: Izdah
-                        document.getElementById('co2-phase-display').textContent = 'IZDIŠI kroz nos';
-                        document.getElementById('co2-circle').textContent = 'IZDIŠI';
-                        document.getElementById('co2-circle').style.backgroundColor = 'var(--danger-color)';
+                        phaseDisplay.textContent = t.exhale + ' ' + t.exhaleDesc.split('.')[0];
+                        circle.textContent = t.exhale;
+                        circle.style.backgroundColor = 'var(--danger-color)';
                         
                         timeLeft = co2ExhaleTime;
                         timerElement.textContent = timeLeft;
@@ -1410,7 +2360,6 @@
                         co2Interval = setInterval(() => {
                             timerElement.textContent = timeLeft;
                             
-                            // Ažuriraj progress bar
                             const progress = 100 - ((timeLeft - 1) / co2ExhaleTime * 100);
                             progressBar.style.width = `${progress}%`;
                             
@@ -1418,12 +2367,11 @@
                                 clearInterval(co2Interval);
                                 playBeep(300, 800);
                                 
-                                // Brzi prijelaz (samo 200ms umjesto 500ms)
                                 setTimeout(() => {
                                     // Faza 3: Zadržavanje
-                                    document.getElementById('co2-phase-display').textContent = 'ZADRŽI DAH';
-                                    document.getElementById('co2-circle').textContent = 'ZADRŽI';
-                                    document.getElementById('co2-circle').style.backgroundColor = 'var(--warning-color)';
+                                    phaseDisplay.textContent = t.hold + ' ' + t.holdDesc.split('.')[0];
+                                    circle.textContent = t.hold;
+                                    circle.style.backgroundColor = 'var(--warning-color)';
                                     
                                     timeLeft = co2HoldTime;
                                     timerElement.textContent = timeLeft;
@@ -1432,7 +2380,6 @@
                                     co2Interval = setInterval(() => {
                                         timerElement.textContent = timeLeft;
                                         
-                                        // Ažuriraj progress bar
                                         const progress = 100 - ((timeLeft - 1) / co2HoldTime * 100);
                                         progressBar.style.width = `${progress}%`;
                                         
@@ -1445,25 +2392,22 @@
                                             clearInterval(co2Interval);
                                             playBeep(500, 800);
                                             
-                                            // Završio jedan cijeli krug
                                             updateCO2CycleDots();
 
-                                            // Ako imamo još krugova → ODMAH u sljedeći UDah
+                                            // Sljedeći krug
                                             if (co2Round < globalCycles) {
                                                 co2Round++;
                                                 updateCO2CycleCounter();
                                                 
-                                                // Bez ikakvog "Spreman" teksta i bez duge pauze
-                                                // Samo vrlo kratki "buffer" (150–300 ms) da se UI stigne osvježiti
                                                 setTimeout(() => {
-                                                    startCO2Cycle();           // ← odmah kreće novi ciklus = udah
-                                                }, 200);                       // 200 ms je sasvim dovoljno, možeš i 150 ili 0
+                                                    startCO2Cycle();
+                                                }, 200);
                                             } 
                                             else {
                                                 // Završena cijela vježba
-                                                document.getElementById('co2-phase-display').textContent = 'Vježba završena! Odmorite se.';
-                                                document.getElementById('co2-circle').textContent = 'GOTOVO';
-                                                document.getElementById('co2-circle').style.backgroundColor = 'var(--accent-color)';
+                                                phaseDisplay.textContent = t.exerciseComplete + ' ' + t.rest;
+                                                circle.textContent = t.done;
+                                                circle.style.backgroundColor = 'var(--accent-color)';
                                                 timerElement.textContent = '';
                                                 progressBar.style.width = '0%';
                                                 isCO2Running = false;
@@ -1481,32 +2425,44 @@
             }, 1000);
         }
 
-        // WIM HOF FUNKCIJE
-        let wimhofRound = 0;
-        let wimhofPhase = 0;
-        let breathCount = 0;
-        let phase1Timer = null;
-        let phase2StartTime = null;
-        let phase2Timer = null;
-        let phase3Timer = null;
-
+        // ========== WIM HOF FUNKCIJE ==========
+        
         function resetWimHof() {
             wimhofRound = 0;
             wimhofPhase = 0;
             breathCount = 0;
             
-            if (phase1Timer) clearTimeout(phase1Timer);
-            if (phase2Timer) clearInterval(phase2Timer);
-            if (phase3Timer) clearTimeout(phase3Timer);
+            // Očisti sve timere
+            if (phase1Timer) {
+                clearInterval(phase1Timer);
+                phase1Timer = null;
+            }
+            if (phase2Timer) {
+                clearInterval(phase2Timer);
+                phase2Timer = null;
+            }
+            if (phase3Timer) {
+                clearTimeout(phase3Timer);
+                phase3Timer = null;
+            }
             
             // Resetiraj UI
-            document.getElementById('wimhof-phase').textContent = 'Priprema...';
-            document.getElementById('wimhof-circle').textContent = 'SPREMAN';
-            document.getElementById('wimhof-circle').style.backgroundColor = 'var(--danger-color)';
+            const t = translations[document.body.getAttribute('data-lang')];
+            const phaseElement = document.getElementById('wimhof-phase');
+            const circle = document.getElementById('wimhof-circle');
+            
+            if (phaseElement) phaseElement.textContent = t.preparation;
+            if (circle) {
+                circle.textContent = t.ready;
+                circle.style.backgroundColor = 'var(--danger-color)';
+            }
+            
             document.getElementById('breath-counter').style.display = 'none';
             document.getElementById('wimhof-timer').style.display = 'none';
             document.getElementById('hold-timer').style.display = 'none';
-            document.getElementById('wimhof-progress').style.width = '0%';
+            
+            const progressBar = document.getElementById('wimhof-progress');
+            if (progressBar) progressBar.style.width = '0%';
             
             // Resetiraj gumbe
             document.getElementById('start-phase1').style.display = 'block';
@@ -1522,10 +2478,21 @@
         }
 
         function startWimHofPhase1() {
+            // Očisti postojeće timere
+            if (phase1Timer) clearInterval(phase1Timer);
+            if (phase2Timer) clearInterval(phase2Timer);
+            if (phase3Timer) clearTimeout(phase3Timer);
+            
             if (wimhofRound >= globalCycles) {
-                document.getElementById('wimhof-phase').textContent = 'Vježba završena!';
-                document.getElementById('wimhof-circle').textContent = 'GOTOVO';
-                document.getElementById('wimhof-circle').style.backgroundColor = 'var(--accent-color)';
+                const t = translations[document.body.getAttribute('data-lang')];
+                const phaseElement = document.getElementById('wimhof-phase');
+                const circle = document.getElementById('wimhof-circle');
+                
+                if (phaseElement) phaseElement.textContent = t.exerciseComplete;
+                if (circle) {
+                    circle.textContent = t.done;
+                    circle.style.backgroundColor = 'var(--accent-color)';
+                }
                 playBeep(500, 1200);
                 return;
             }
@@ -1536,10 +2503,18 @@
             wimhofPhase = 1;
             breathCount = 0;
             
+            const t = translations[document.body.getAttribute('data-lang')];
+            
             // Ažuriraj UI
-            document.getElementById('wimhof-phase').textContent = 'FAZA 1: Brzo disanje (20-30 udisaja)';
-            document.getElementById('wimhof-circle').textContent = 'BRZO DISANJE';
-            document.getElementById('wimhof-circle').style.backgroundColor = 'var(--primary-color)';
+            const phaseElement = document.getElementById('wimhof-phase');
+            const circle = document.getElementById('wimhof-circle');
+            
+            if (phaseElement) phaseElement.textContent = t.wimStep1;
+            if (circle) {
+                circle.textContent = t.fastBreathing;
+                circle.style.backgroundColor = 'var(--primary-color)';
+            }
+            
             document.getElementById('breath-counter').style.display = 'block';
             document.getElementById('breath-count').textContent = '0';
             document.getElementById('wimhof-timer').style.display = 'block';
@@ -1556,10 +2531,11 @@
             const timerElement = document.getElementById('wimhof-timer');
             const progressBar = document.getElementById('wimhof-progress');
             
+            if (!timerElement || !progressBar) return;
+            
             phase1Timer = setInterval(() => {
                 timerElement.textContent = timeLeft;
                 
-                // Ažuriraj progress bar
                 const progress = 100 - ((timeLeft - 1) / 60 * 100);
                 progressBar.style.width = `${progress}%`;
                 
@@ -1574,23 +2550,6 @@
             playBeep(300, 800);
         }
 
-        function countBreath() {
-            if (wimhofPhase !== 1) return;
-            
-            breathCount++;
-            document.getElementById('breath-count').textContent = breathCount;
-            
-            // Svaki 5. udisaj dobije zvučnu potvrdu
-            if (breathCount % 5 === 0) {
-                playBeep(100, 600);
-            }
-            
-            // Ako je dosegao 30 udisaja, može prijeći u fazu 2
-            if (breathCount >= 30) {
-                document.getElementById('start-phase2').style.backgroundColor = 'var(--accent-color)';
-            }
-        }
-
         function startWimHofPhase2() {
             if (phase1Timer) {
                 clearInterval(phase1Timer);
@@ -1599,10 +2558,18 @@
             
             wimhofPhase = 2;
             
+            const t = translations[document.body.getAttribute('data-lang')];
+            
             // Ažuriraj UI
-            document.getElementById('wimhof-phase').textContent = 'FAZA 2: Izdah i zadrži dah (koliko god možeš)';
-            document.getElementById('wimhof-circle').textContent = 'ZADRŽI';
-            document.getElementById('wimhof-circle').style.backgroundColor = 'var(--danger-color)';
+            const phaseElement = document.getElementById('wimhof-phase');
+            const circle = document.getElementById('wimhof-circle');
+            
+            if (phaseElement) phaseElement.textContent = t.wimStep2;
+            if (circle) {
+                circle.textContent = t.hold;
+                circle.style.backgroundColor = 'var(--danger-color)';
+            }
+            
             document.getElementById('breath-counter').style.display = 'none';
             document.getElementById('wimhof-timer').style.display = 'none';
             document.getElementById('hold-timer').style.display = 'block';
@@ -1619,8 +2586,11 @@
                 const elapsed = Math.floor((Date.now() - phase2StartTime) / 1000);
                 const minutes = Math.floor(elapsed / 60);
                 const seconds = elapsed % 60;
-                document.getElementById('hold-timer').textContent = 
-                    `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                const holdTimer = document.getElementById('hold-timer');
+                if (holdTimer) {
+                    holdTimer.textContent = 
+                        `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                }
             }, 100);
             
             playBeep(300, 600);
@@ -1634,10 +2604,18 @@
             
             wimhofPhase = 3;
             
+            const t = translations[document.body.getAttribute('data-lang')];
+            
             // Ažuriraj UI
-            document.getElementById('wimhof-phase').textContent = 'FAZA 3: Duboki udisaj i zadrži 15 sekundi';
-            document.getElementById('wimhof-circle').textContent = 'UDAHNI I ZADRŽI';
-            document.getElementById('wimhof-circle').style.backgroundColor = 'var(--primary-color)';
+            const phaseElement = document.getElementById('wimhof-phase');
+            const circle = document.getElementById('wimhof-circle');
+            
+            if (phaseElement) phaseElement.textContent = t.wimStep3;
+            if (circle) {
+                circle.textContent = t.inhale + ' ' + t.hold;
+                circle.style.backgroundColor = 'var(--primary-color)';
+            }
+            
             document.getElementById('hold-timer').style.display = 'block';
             document.getElementById('hold-timer').textContent = '15';
             
@@ -1651,41 +2629,54 @@
             const holdTimerElement = document.getElementById('hold-timer');
             const progressBar = document.getElementById('wimhof-progress');
             
+            if (!holdTimerElement || !progressBar) return;
+            
             // Resetiraj progress bar
             progressBar.style.width = '0%';
             
             phase3Timer = setInterval(() => {
                 holdTimerElement.textContent = timeLeft;
                 
-                // Ažuriraj progress bar
                 const progress = 100 - ((timeLeft - 1) / 15 * 100);
                 progressBar.style.width = `${progress}%`;
                 
                 if (timeLeft <= 1) {
                     clearInterval(phase3Timer);
                     
-                    // Završi ovaj krug i pripremi za sljedeći
                     playBeep(500, 1200);
+                    
+                    const t = translations[document.body.getAttribute('data-lang')];
                     
                     // Ako imamo još krugova, pripremi za sljedeći
                     if (wimhofRound < globalCycles) {
                         setTimeout(() => {
-                            document.getElementById('wimhof-phase').textContent = 'Priprema za sljedeći krug...';
-                            document.getElementById('wimhof-circle').textContent = 'SPREMAN';
-                            document.getElementById('wimhof-circle').style.backgroundColor = 'var(--danger-color)';
+                            const phaseElement = document.getElementById('wimhof-phase');
+                            const circle = document.getElementById('wimhof-circle');
+                            
+                            if (phaseElement) phaseElement.textContent = t.preparation;
+                            if (circle) {
+                                circle.textContent = t.ready;
+                                circle.style.backgroundColor = 'var(--danger-color)';
+                            }
+                            
                             document.getElementById('hold-timer').style.display = 'none';
                             progressBar.style.width = '0%';
                             
-                            // Kratka pauza prije sljedećeg kruga
                             setTimeout(() => {
                                 startWimHofPhase1();
                             }, 1000);
                         }, 500);
                     } else {
                         // Završena cijela vježba
-                        document.getElementById('wimhof-phase').textContent = 'Vježba završena! Odmorite se.';
-                        document.getElementById('wimhof-circle').textContent = 'GOTOVO';
-                        document.getElementById('wimhof-circle').style.backgroundColor = 'var(--accent-color)';
+                        const phaseElement = document.getElementById('wimhof-phase');
+                        const circle = document.getElementById('wimhof-circle');
+                        
+                        if (phaseElement) phaseElement.textContent = t.exerciseComplete + ' ' + t.rest;
+                        if (circle) {
+                            circle.textContent = t.done;
+                            circle.style.backgroundColor = 'var(--accent-color)';
+                        }
+                        
                         document.getElementById('hold-timer').style.display = 'none';
                         document.getElementById('start-phase1').style.display = 'none';
                     }
@@ -1696,26 +2687,59 @@
             playBeep(300, 800);
         }
 
+        // ========== OSTATALI VJEŽBE ==========
+        
+        // Pomoćna funkcija za animaciju
+        function animateProgress(duration, timerId, callback) {
+            const timer = document.getElementById(timerId);
+            const progressBarId = timerId.replace('timer', 'progress');
+            const bar = document.getElementById(progressBarId);
+            
+            if (!timer || !bar) return;
+            
+            let timeLeft = duration;
+            const interval = setInterval(() => {
+                timer.textContent = timeLeft;
+                const progress = 100 - ((timeLeft - 1) / duration * 100);
+                bar.style.width = `${progress}%`;
+                
+                if (timeLeft <= 1) {
+                    clearInterval(interval);
+                    bar.style.width = "0%";
+                    if (callback) callback();
+                }
+                timeLeft--;
+            }, 1000);
+            
+            // Spremi interval za čišćenje
+            activeIntervals.push(interval);
+        }
+
         // DUBOKO DISANJE
         function startDeepBreathing() {
+            clearAllIntervals();
+            
             const circle = document.getElementById('deep-circle');
             const timer = document.getElementById('deep-timer');
             const progressBar = document.getElementById('deep-progress');
             
+            if (!circle || !timer || !progressBar) return;
+            
             let cycles = 0;
             const totalCycles = globalCycles;
             
+            const t = translations[document.body.getAttribute('data-lang')];
+            
             cycles = 0;
             progressBar.style.width = "0%";
-            circle.textContent = "SPREMAN";
+            circle.textContent = t.ready;
             circle.style.backgroundColor = "var(--danger-color)";
             
-            // Inicijaliziraj brojač
             updateCycleCounter('deep-cycle-counter', 0, totalCycles);
             
             function deepBreathCycle() {
                 if (cycles >= totalCycles) {
-                    circle.textContent = "GOTOVO";
+                    circle.textContent = t.done;
                     circle.style.backgroundColor = "var(--accent-color)";
                     timer.textContent = "";
                     updateCycleCounter('deep-cycle-counter', totalCycles, totalCycles);
@@ -1726,15 +2750,15 @@
                 cycles++;
                 updateCycleCounter('deep-cycle-counter', cycles, totalCycles);
                 
-                circle.textContent = "UDIŠI";
+                circle.textContent = t.inhale;
                 circle.style.backgroundColor = "var(--primary-color)";
                 animateProgress(4, "deep-timer", () => {
                     playBeep(300, 800);
-                    circle.textContent = "ZADRŽI";
+                    circle.textContent = t.hold;
                     circle.style.backgroundColor = "#9b59b6";
                     animateProgress(7, "deep-timer", () => {
                         playBeep(300, 800);
-                        circle.textContent = "IZDIŠI";
+                        circle.textContent = t.exhale;
                         circle.style.backgroundColor = "var(--danger-color)";
                         animateProgress(8, "deep-timer", () => {
                             playBeep(300, 800);
@@ -1749,24 +2773,29 @@
 
         // KVADRATNO DISANJE
         function startBoxBreathing() {
+            clearAllIntervals();
+            
             const circle = document.getElementById('box-circle');
             const timer = document.getElementById('box-timer');
             const progressBar = document.getElementById('box-progress');
             
+            if (!circle || !timer || !progressBar) return;
+            
             let cycles = 0;
             const totalCycles = globalCycles;
             
+            const t = translations[document.body.getAttribute('data-lang')];
+            
             cycles = 0;
             progressBar.style.width = "0%";
-            circle.textContent = "SPREMAN";
+            circle.textContent = t.ready;
             circle.style.backgroundColor = "var(--danger-color)";
             
-            // Inicijaliziraj brojač
             updateCycleCounter('box-cycle-counter', 0, totalCycles);
             
             function boxBreathCycle() {
                 if (cycles >= totalCycles) {
-                    circle.textContent = "GOTOVO";
+                    circle.textContent = t.done;
                     circle.style.backgroundColor = "var(--accent-color)";
                     timer.textContent = "";
                     updateCycleCounter('box-cycle-counter', totalCycles, totalCycles);
@@ -1777,19 +2806,19 @@
                 cycles++;
                 updateCycleCounter('box-cycle-counter', cycles, totalCycles);
                 
-                circle.textContent = "UDIŠI";
+                circle.textContent = t.inhale;
                 circle.style.backgroundColor = "var(--primary-color)";
                 animateProgress(4, "box-timer", () => {
                     playBeep(300, 800);
-                    circle.textContent = "ZADRŽI";
+                    circle.textContent = t.hold;
                     circle.style.backgroundColor = "#9b59b6";
                     animateProgress(4, "box-timer", () => {
                         playBeep(300, 800);
-                        circle.textContent = "IZDIŠI";
+                        circle.textContent = t.exhale;
                         circle.style.backgroundColor = "var(--danger-color)";
                         animateProgress(4, "box-timer", () => {
                             playBeep(300, 800);
-                            circle.textContent = "PAUZA";
+                            circle.textContent = t.holdEmpty;
                             circle.style.backgroundColor = "var(--warning-color)";
                             animateProgress(4, "box-timer", () => {
                                 playBeep(300, 800);
@@ -1805,24 +2834,29 @@
 
         // ALTERNATIVNO DISANJE
         function startAlternateBreathing() {
+            clearAllIntervals();
+            
             const circle = document.getElementById('alternate-circle');
             const timer = document.getElementById('alternate-timer');
             const progressBar = document.getElementById('alternate-progress');
             
+            if (!circle || !timer || !progressBar) return;
+            
             let cycles = 0;
             const totalCycles = globalCycles;
             
+            const t = translations[document.body.getAttribute('data-lang')];
+            
             cycles = 0;
             progressBar.style.width = "0%";
-            circle.textContent = "SPREMAN";
+            circle.textContent = t.ready;
             circle.style.backgroundColor = "var(--danger-color)";
             
-            // Inicijaliziraj brojač
             updateCycleCounter('alternate-cycle-counter', 0, totalCycles);
             
             function alternateBreathCycle() {
                 if (cycles >= totalCycles) {
-                    circle.textContent = "GOTOVO";
+                    circle.textContent = t.done;
                     circle.style.backgroundColor = "var(--accent-color)";
                     timer.textContent = "";
                     updateCycleCounter('alternate-cycle-counter', totalCycles, totalCycles);
@@ -1833,15 +2867,15 @@
                 cycles++;
                 updateCycleCounter('alternate-cycle-counter', cycles, totalCycles);
                 
-                circle.textContent = "UDIŠI LIJEVOM";
+                circle.textContent = t.breatheLeft;
                 circle.style.backgroundColor = "var(--primary-color)";
                 animateProgress(4, "alternate-timer", () => {
                     playBeep(300, 800);
-                    circle.textContent = "ZADRŽI";
+                    circle.textContent = t.hold;
                     circle.style.backgroundColor = "#9b59b6";
                     animateProgress(4, "alternate-timer", () => {
                         playBeep(300, 800);
-                        circle.textContent = "IZDIŠI DESNOM";
+                        circle.textContent = t.breatheRight;
                         circle.style.backgroundColor = "var(--danger-color)";
                         animateProgress(6, "alternate-timer", () => {
                             playBeep(300, 800);
@@ -1856,24 +2890,29 @@
 
         // KAPALABHATI
         function startKapalabhati() {
+            clearAllIntervals();
+            
             const circle = document.getElementById('kapalabhati-circle');
             const timer = document.getElementById('kapalabhati-timer');
             const progressBar = document.getElementById('kapalabhati-progress');
             
+            if (!circle || !timer || !progressBar) return;
+            
             let rounds = 0;
             const totalRounds = globalCycles;
             
+            const t = translations[document.body.getAttribute('data-lang')];
+            
             rounds = 0;
             progressBar.style.width = "0%";
-            circle.textContent = "SPREMAN";
+            circle.textContent = t.ready;
             circle.style.backgroundColor = "var(--danger-color)";
             
-            // Inicijaliziraj brojač
             updateKapalabhatiCounter(0, totalRounds);
             
             function round() {
                 if (rounds >= totalRounds) {
-                    circle.textContent = "GOTOVO";
+                    circle.textContent = t.done;
                     circle.style.backgroundColor = "var(--accent-color)";
                     timer.textContent = "";
                     updateKapalabhatiCounter(totalRounds, totalRounds);
@@ -1884,11 +2923,11 @@
                 rounds++;
                 updateKapalabhatiCounter(rounds, totalRounds);
                 
-                circle.textContent = "BRZO UDIŠI I IZDIŠI";
+                circle.textContent = t.fastBreathing;
                 circle.style.backgroundColor = "var(--danger-color)";
                 animateProgress(15, "kapalabhati-timer", () => {
                     playBeep(300, 800);
-                    circle.textContent = "UDAHNI I ZADRŽI";
+                    circle.textContent = t.inhale + ' ' + t.hold;
                     circle.style.backgroundColor = "#9b59b6";
                     animateProgress(15, "kapalabhati-timer", () => {
                         playBeep(300, 800);
@@ -1900,29 +2939,101 @@
             round();
         }
 
-        // POBOLJŠANA POMOĆNA FUNKCIJA ZA ANIMACIJU (bez nulte sekunde)
-        function animateProgress(duration, timerId, callback) {
-            const timer = document.getElementById(timerId);
-            const progressBar = timerId.replace('timer', 'progress');
-            const bar = document.getElementById(progressBar);
+        // ========== INICIJALIZACIJA ==========
+        
+        window.onload = function() {
+            // Postavi temu
+            const initialTheme = getCurrentTheme();
+            setTheme(initialTheme);
             
-            let timeLeft = duration;
-            const interval = setInterval(() => {
-                timer.textContent = timeLeft;
-                const progress = 100 - ((timeLeft - 1) / duration * 100);
-                if (bar) bar.style.width = `${progress}%`;
+            // Postavi jezik
+            const initialLang = getCurrentLanguage();
+            document.body.setAttribute('data-lang', initialLang);
+            document.documentElement.lang = initialLang;
+            updateLanguage(initialLang);
+            
+            // Inicijaliziraj gumb za jezik
+            const languages = [
+                {code: 'hr', flag: '🇭🇷', name: 'HR'},
+                {code: 'en', flag: '🇬🇧', name: 'EN'},
+                {code: 'de', flag: '🇩🇪', name: 'DE'},
+                {code: 'es', flag: '🇪🇸', name: 'ES'}
+            ];
+            const initialLangObj = languages.find(lang => lang.code === initialLang);
+            if (initialLangObj) {
+                const flagElement = document.getElementById('current-lang-flag');
+                const nameElement = document.getElementById('current-lang-name');
                 
-                if (timeLeft <= 1) {
-                    clearInterval(interval);
-                    if (bar) bar.style.width = "0%";
-                    if (callback) callback();
+                if (flagElement) flagElement.textContent = initialLangObj.flag;
+                if (nameElement) nameElement.textContent = initialLangObj.name;
+            }
+            
+            // Postavi početnu vrijednost slidera
+            const slider = document.getElementById('global-cycles');
+            if (slider) {
+                slider.value = globalCycles;
+                updateAllCycleCounts();
+                
+                // Dodaj event listener na slider
+                slider.addEventListener('input', function() {
+                    globalCycles = parseInt(this.value);
+                    updateAllCycleCounts();
+                    showFeedback();
+                });
+            }
+            
+            // CO2 slider event listeneri
+            const inhaleSlider = document.getElementById('inhale-slider');
+            if (inhaleSlider) {
+                inhaleSlider.addEventListener('input', function() {
+                    co2InhaleTime = parseInt(this.value);
+                    document.getElementById('inhale-value').textContent = co2InhaleTime + 's';
+                    document.getElementById('summary-inhale').textContent = co2InhaleTime + 's';
+                    playBeep(50, 600);
+                });
+            }
+            
+            const exhaleSlider = document.getElementById('exhale-slider');
+            if (exhaleSlider) {
+                exhaleSlider.addEventListener('input', function() {
+                    co2ExhaleTime = parseInt(this.value);
+                    document.getElementById('exhale-value').textContent = co2ExhaleTime + 's';
+                    document.getElementById('summary-exhale').textContent = co2ExhaleTime + 's';
+                    playBeep(50, 600);
+                });
+            }
+            
+            const holdSlider = document.getElementById('hold-slider');
+            if (holdSlider) {
+                holdSlider.addEventListener('input', function() {
+                    co2HoldTime = parseInt(this.value);
+                    document.getElementById('hold-value').textContent = co2HoldTime + 's';
+                    document.getElementById('summary-hold').textContent = co2HoldTime + 's';
+                    playBeep(50, 600);
+                });
+            }
+            
+            // Inicijaliziraj CO2 prikaz točkica
+            updateCO2CycleDots();
+            
+            // Prikaži prvu vježbu po defaultu
+            showExercise('deep');
+            
+            // Dodaj event listener za inicijalizaciju AudioContexta
+            document.addEventListener('click', function initAudio() {
+                if (!audioInitialized) {
+                    getAudioContext();
                 }
-                timeLeft--;
-            }, 1000);
-        }
+                document.removeEventListener('click', initAudio);
+            });
+        };
 
-        // Prikaži prvu vježbu po defaultu
-        showExercise('deep');
+        // Dodaj event listener za tipkovnicu (accessibility)
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                stopAllExercises();
+            }
+        });
     </script>
 </body>
 </html>
